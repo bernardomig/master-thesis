@@ -1,0 +1,88 @@
+\chapter{Laser Extrinsic Calibration}
+
+In order for this system to work, it requires the position and rotation of the laser to be known, in order to transform the laser scans into a static referencial, also known in robotics as the base link. This transformation, in this sustem is between the mount link of the pan-tilt (\textit{lemonbot\_ptu\_mount\_link}) to the laser optical sensor (\textit{lemonbot\_laser\_optical\_link}).
+
+This transformation needs to be known to a high degree of accuracy, because any small error scales with the distance of the target to the object. For example, an error of \ang{0.1} in the rotation of laser translates, in a target at \SI{1}{\meter}, into an absolute error $\epsilon = \SI{1}{\meter} \times \tan{\ang{0.1}} = \SI{17}{\milli\meter}$, which is already significant. So, the calibration method used in this system needs to be very accurate, in order to produce viable results.
+
+\section{Known Methods}
+
+Methods to calibrate a laser mounted in a moving frame were not found, so initially we used a combination of two methods, by using a camera between: the \textit{Hand2Eye Calibration}, which calibrates a camera mounting into a moving frame, and the \textit{RADLOCC Calibration}, which calibrates a laser to a camera. So the calibration required the following steps:
+
+\begin{enumerate}
+    \item Firstly, the intrinsic parameters of the camera are found, using the well-known chessboard calibration method. (Missing Reference)
+    \item Then, the extrinsic calibration of the camera to the PTU is found using the \textit{Hand2Eye Calibration}. (Missing Reference)
+    \item After, the camera-laser extrinsic calibration was found using the \textit{RADLOCC Calibration}. (Also Missing Reference).
+    \item Lastly, this two extrinsic transformation given by the extrinsic calibrations are merged into one: the ptu-laser transformation.
+\end{enumerate}
+
+This method was however not successful in finding an accurate calibration, as can be seen in (Insert a figure with the not so good calibrations). Even so, we used it as an initial guess and to compare it to our proposed method. The reasons this method fail are suspected to be the following:
+
+\begin{enumerate}
+    \item (enumerate the reasons....)
+\end{enumerate}
+
+\section{Proposed Method}
+
+The method hereby shown relies on that a bad calibration does not produce a perfect geometry, in particular, points that belong to a plane, with a good calibration, should lie close to the corresponding plane formed by them. So this method relies on a minimization of a function that has as its inputs the parameterized transformation and as it's output, the score of the heuristic said above. Therefore, the lower the function value, the better the calibration, so we will try to find a minimum for this function.
+
+The optimization function is composed of the following steps, which are explained in more detail afterwards.
+
+\begin{itemize}
+    \item A point cloud is generated, using the input parameters to construct the ptu-laser transformation.
+    \item A plane segmentation is performed, creating an array of point clouds, each one representing each plane. This segmentation is one time before hand manually and each subsequent segmentation follows this one as the ground truth. (Insert figure with the segmentation)
+    \item Each cluster of points is then processed in a plane-fitting algorithm that outputs the normalized square distance of the points to the corresponding plane, also known as the mean square error (MSE).
+    \item Then, an heuristic function combines the MSE of all the point clouds into a single value, that should reflect how good the transformation is.
+\end{itemize}
+
+\subsection{Parameterization}
+
+The parameters required for the optimization functions should be the ptu-laser transformation. A transformation is composed by a translation and a rotation. Since a rotation matrix is composed by 9 elements to express 3 degrees of freedom other parameterization methods are used: Euler angles, axis/angle or quaternions. Quaternions are the standard representation, mainly because of its algebra, which is makes it easy to interpolate and create smooth movements, unlike Euler angles.
+
+For the parameterization, we choose to use the axis/angle representation, because:
+
+\begin{itemize}
+    \item It is a \textit{fair parameterization}, meaning that it does not introduce more numerical sensibility to the problem than what is inherent to it.
+    \item It has only 3 elements to express the 3 degrees of freedom, unlike quaternions, which have 4 elements.
+    \item It does not contain any singularities, like the \textit{gimbal lock} in Euler angles.
+\end{itemize}
+
+\subsubsection{Axis/angle representation}
+
+Any rotation $R$ can be expressed as a rotation around an axis $a \in I\!R^3$ by an angle $\theta$. Since only the direction of $a$ matter, both $\theta$ and $a$ can be combined into a vector $\omega$, such that:
+
+\begin{equation}
+    \theta = |\omega|, \qquad a = \frac{\omega}{|\omega|} .
+\end{equation}
+
+Because we use the quaternion representation for every rotation, this representation is converted into a quaternion $q$ for the subsequent steps and back, using \cref{eq:axis_angle_to_quaternion,eq:quaternion_to_axis_angle}:
+
+\begin{equation}\label{eq:axis_angle_to_quaternion}
+    q = (\cos \frac{\theta}{2}, \sin \frac{\theta}{2} \cdot a)
+\end{equation}
+
+\begin{equation}\label{eq:quaternion_to_axis_angle}
+    \begin{cases}
+        \theta = \arccos(q_w) \\
+        a = \arcsin(q_w) \cdot (q_x, q_y, q_z)
+    \end{cases}
+\end{equation}
+
+\subsubsection{Conclusion}
+
+In conclusion, the input parameters are going to contain 6 elements, containing 3 elements referent to the translation $r = (r_x, r_y, r_z)$ and 3 elements referent to the rotation $\omega = (\omega_x, \omega_y, \omega_z)$, using a angle/axis representation. The heuristic is going to be expressed as $h = f(r_x, r_y, r_z, \omega_x, \omega_y, \omega_z)$.
+
+\subsection{Plane Segmentation}
+
+The plane segmentation step was made manually in 
+
+\subsection{Plane Fitting}
+
+\subsection{Heuristic}
+
+\subsection{Optimization Method}
+
+\section{Data}
+
+\section{Results}
+
+\section{Conclusions}

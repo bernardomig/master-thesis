@@ -1,0 +1,28 @@
+\chapter{Introduction}
+
+Digital reconstruction of three dimensional scenes is a field that gained a high importance in areas like architecture, robotics, archeology, autonomous driving and virtual reality.  The process of digitalization of the environment into a 3D model still poses a lot of challenges, requiring a lot of processing and merging data from different sensors to get an accurate representation. 
+
+\section{Objectives}
+
+Despite all the work done, there is still no perfect solution. 3D reconstruction is still a challenge, because real scenes are very complex and sensors have errors and noise. Past experience tells that a single sensor is not enough to model real environments, so currently the process lies into using multiple sensors and trying to merge the data from all the sensors, in order to capture a more realistic model.
+
+However, this introduces a set of other problems that are inherent to this approach. For example, the data from the different sensors need to be merged accurately. For example, the positions of all the sensors need to be known accurately, which means that the calibration processes need to be more robust and precise.
+
+So, we aim to develop a 3D sensor that captures both range scans as well as color images, which is now a very recurrent and successful approach. This is because both sensors complementing each other, one providing high definition and accurate spatial resolution (Laser scanner) and the other providing the high resolution color map.
+
+The main objectives are:
+
+\begin{enumerate}
+    \item Development of an algorithm capable of creating a 3D colorized point cloud. It is required that all geometry and color registration be accurate and precise and the model need to have a high density of points, in order to register most of the details of the scene.
+
+    \item Creating a dataset consisting of multiple acquisitions for subsequent use by other projects in 3D processing and vision algorithms.
+
+    \item Development of an automatic and easy-configurable mobile robot for easy and reliable captures, to use for subsequent work.
+\end{enumerate}
+
+What is not covered in this work is:
+
+\begin{enumerate}
+    \item Processing and vision algorithms for 3d models. We do not include this in this work because the main objective is creating dense and accurate point clouds, not processing them. However, we hope that this work provide ways to obtain reliable data for 3D-based algorithms.
+    \item Generating 3D mesh models. Mesh models are better for representing a scene, and algorithms like Delaunay triangulation and Ball-pivoting triangulation algorithms allow it to easily create a mesh from a point cloud. Nonetheless, it requires huge amounts of preprocessing and post processing to get a good 3D mesh model. Yet, the 3D point clouds resulting in this work can be processed to create a 3D mesh model.
+\end{enumerate}

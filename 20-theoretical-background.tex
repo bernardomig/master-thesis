@@ -1,0 +1,88 @@
+\chapter{Theoretical background}
+
+\section{Technologies}
+
+Many technologies were developed to capture tridimensional information of the environment. In the following section, we aim to describe such systems and describe the basic working principle along with the pros and cons inherent to each ones. These techniques can be categorized into triangulation and time-of-flight.
+
+\subsection{Stereoscopy}
+
+For many years, stereoscopy remain the most popular method for 3D sensing, also because it's working principle resembles our stereoscopic vision. This system uses images taken from a pair of cameras and extract the depth information due to the perspective projection: the position of objects closer differ more than objects farther. To compute depth, features from both images are extracted and correspond together, which makes it a complex and computationally demanding, so it requires fast computers or dedicated software. This system has the advantage of having a good rate of acquisition and having high resolution. Also, color information is available. However, the reconstruction algorithm rely heavy on environment characteristics, like lightning conditions, texture and non-homogeneous regions\cite{klimentjew2010}. This means that this method gives good results for edges and textured areas, but fails to get the depth information of continuous surfaces.
+
+\subsection{Structured Light}
+
+In 2010, the availability of consumer grade depth sensors based on structured light lead to the development of consumer-grade small factor RGB-D cameras, started by Microsoft, with the \textit{Kinect} and followed by other devices, like \textit{ASUS Xtion} and \textit{Intel RealSense}. This cameras come in small form factors, are inexpensive and are capable of capturing both color and depth information at real-time rates\cite{zollhoefer2018}.
+
+This appealing characteristics lead to a huge research and development in 3D reconstruction using this camera, culminating in the KinectFusion algorithm \cite{kinectfusion2011}, capable of a fast and precise 3D reconstruction using a \textit{Kinect} RGB-D camera and commodity GPUs. This algorithm was capable of real-time reconstruction, using a Iterative Closest Point (ICP) for tracking the location of the device and for the registration of new RGB-D data. Nowadays, it is possible to achieve the same result using a phone equipped with a depth camera, like the \textit{Lenovo Phab 2} and with the \textit{Google Tango} software. 
+
+Structured light sensors work by projecting an infrared pattern onto the scene and calculate the depth via the perspective deformation of the pattern due to the different object's depth. This technique, however, yields results far from perfect: the depth values from structured light have significant error or can be missing, specially from objects with darker colors, specular surfaces or small surfaces\cite{shen2013}. 
+
+\subsection{Time of Flight}
+
+Time of flight sensors use the speed of light to measure the distance. A scene is illuminated by a light source and the reflected light is detected back by the sensor. The time that the light has taken to travel back and forth is then measured and the depth is calculated with this time. The measurement dependes on the type of ToF system used, that is ether \textit{continuous} or \textit{pulsed}. In \textit{pulsed} systems, light is emitted in bursts with a fast shutter and the time between the emission and the reception is calculated. \textit{Continuous} systems use a modulated light source and measure the phase-shift between the outgoing and incoming wave.
+
+This technology some advantages comparing to both previous approaches \cite{zollhoefer2018}:
+
+\begin{enumerate}
+    \item Is less computationally intensive, because the measurement is directly measured by a specialized sensor.
+    \item Is partially independent of the lightning conditions because the light detected is emitted by the device itself.
+    \item Is capable of a dense and accurate depth values, even for continuous or irregular surfaces, unlike the stereoscopic approach.
+    \item It is much faster that any other method, capable of acquisition rates of hundreds of \si{\hertz}.
+\end{enumerate}
+
+However, it has some disadvantages as well:
+
+\begin{enumerate}
+    \item Unlike stereoscopic, which is a passive method, ToF sensors interact with the scene, so are not possible to be implemented in certain environments.
+    \item The properties of the material, like the reflectivity, color and roughness can have significant effects on the accuracy of ToF sensors.
+    \item Multi-path reflections are a common problem of ToF sensors, caused by multiple reflections of the light, causing errors in the measurements.
+    \item Interference if multiple ToF sensors share the same environment. However, it is possible to mitigate this effect.
+\end{enumerate}
+
+A new popular ToF sensor today is the Photonic-Mixer-Device camera, which looks similarly to a normal image sensor measures the phase shift of incoming light. This sensor is now being used in new generation RGB-D camera, replacing the structured light approach, mainly because it is more resilient to background light, allowing the sensor to work in outdoor environments \cite{zollhoefer2018}. One of this example is the new \textit{Kinetic 2}, that replaced the last depth sensor with this one.
+
+\subsection{LiDAR}
+
+Light Detection and Ranging, or LiDAR, it's one of the most precise and reliable ways to measure distances. It began being used shortly after the Laser invention, in 1960, and it's valuable characteristics lead to the integration of it in the Apollo 15 mission, to serve as an altimeter to map the surface of the moon. Soon after, it was implemented in aircraft to create high-precision and dense earth's surface models. Nowadays, it's applications can be found everywhere where an accurate distance measurement is required, as for example in geology, archeology, geography, oceanography and meteorology.
+
+LiDAR success is related to the use of laser as it's light source. Lasers are capable of emitting beams of light that are:
+
+\begin{enumerate}
+    \item \textbf{Monochromatic}. Lasers emit light in a narrow spectrum of light, so they can produce a single color of light. It improves the resilience against background light, making it independent to sun radiation.
+    \item \textbf{Narrow}. Laser photons travel parallel, creating a narrow beam that stays narrow even at large distances, with minimum scattering, therefore measuring the distance in a very small area in the surface. This improves the measurements near sharp transitions, where a bigger area of measurement can cause errors in the measurement. 
+    \item \textbf{Polarized}. 
+\end{enumerate}
+
+
+
+\section{Related Work}
+
+Many scientific studies can already be found concerning the research and development of 3D sensors using laser scanners. In most studies, a cheaper alternative using 2D laser scanners is build instead of a more expensive 3D solution. In order to create a full 3D scan, the 2D laser is mounted on top of a moving platform and each individual laser scan is registered on a static frame of reference. The motion of the laser scanner can be classified as \textbf{continuous} or \textbf{discontinuous}. Usually a \textbf{continuous} motion is used for real-time systems, like autonomous vehicles, while a \textbf{discontinuous} motion is used when real-time is not important, like accurate 3D reconstructions of scenes. In the following paragraphs we describe such systems that were developed so far.
+
+In \cite{surmann2003}, a mobile robot was capable of autonomous navigation, thanks to a tilting \textit{LMS200} laser scanner, that provided a depth map of the front of the robot, with a maximum resolution of $721\times256$ points. However, a scan of $181\times256$ took about \SI{3.4}{\second}, and scans with more points ($361$ or $721$) meant double or quadruple this time, making it not suitable for real-time operation. This previous system had a limited field of view, so in \cite{zcai05} a \textit{LMS291} was mounted on a pan-tilt unit for generating a 3D point cloud with a parameterized field of view.
+
+More recently, 3D laser scanner began being developed for continuous operation for real-time for Simultaneous Mapping and Navigation, or \textit{SLAM}, for autonomous robots. This was specially due to the \textit{DARPA} Grand Challenge, that offered \$1 million cash prize, to the fastest autonomous unmanned vehicle that completed a 300 miles track. In \cite{maurelli2009}, a 3D laser scanner was developed by placing two \textit{LMS200} planar laser scanners on a rotating vertical axis, capable of generating a high-quality 3D point cloud with a \SI{360}{\degree} field of view. Lots of other lasers were developed by rotating the laser in a continuous motion using a turntable \cite{nemoto2007}, a swinging platform \cite{yoshida11}. This sensor also became lighter, compact and modular, making it possible to integrate in multiple systems easily. One of this systems is \textit{KaRoLa}, described in \cite{karola14}. This laser scanner was then applied to several system, specially in search and rescue robots.
+
+The 3D laser sensors are only able to reconstruct the geometry of the scene. Some sensors are also able to measure the intensity of the reflected light, create a grayscale value for each point. This intensity is measured, of course, in the frequency spectrum of the emitted light of the sensor, which is usually infrared (\SI{950}{\nano\meter}). To reconstruct the color, one or more cameras are coupled to the sensor, and both depth and color data is merged, in a process called \textbf{fusion}, to create colorized model. This is specially important for area like architecture or archeology, where color information is very important. Such work can be seen on \cite{pdias2006}, where a 3D sensor like the one described in \cite{surmann2003} was paired with a camera, to generate a 3D reconstruction with color. Another technique was created in \cite{stamus2000}, where the range and color images are captured separately and then a method is used to make the registration of the color images in respect to the extracted geometry. The registration was optimized for scenes with high geometry content.
+
+This techniques are applied, for example, in cultural heritage, to model important art pieces. One of the most famous examples is the Michelangelo project \cite{levoy2000}, which developed a technique to register data from a triangulation sensor and color image data to reconstruct the 3D geometry of the statue of Michelangelo's David. One of the challenges in this project was to capture the chisel marks in the surface of the status, requiring a resolution of \nicefrac{1}{4} \si{\milli\meter}, in a statue \SI{5}{\meter} tall.
+
+\section{Comercial Solutions}
+
+\section{3D Digital Models}
+
+Recreating a real scene with computer graphics is an important topic in today's world and many advancements are being made to create the illusion, for the user, that what he is seeing is real. Many technologies and advancements appeared, like Virtual-Reality, high definition models, photo-realistic rendering and dynamic models. One of the biggest objectives of 3D reconstruction is the possibility of using this technologies to recreate real 3D scenes, making it possible for anyone with a computer or a VR-set to experience this scenes. The number of applications are huge, but the problem remains: how can we save a 3D environment?
+
+In computer graphics, the most common representation is a polygonal mesh. It is composed by a collection of vertices, edges and faces composing a polygon that represents a simplification of the original geometry. Because of it's flexibility and wide use, graphic cards are specially optimized to render this meshes and the result are very good. Properties of the object, like color and material, can be added per-vertex or per-face, making it a flexible model to save all the details of the scene. There are also many drawbacks to this representation, for example, the inadequate representation of non-linear surfaces, requiring large sampling to represent it reliably.
+
+However, it is impossible to get a mesh directly from a 3D scanner, so a simpler model is used instead: the point cloud. A \textbf{point cloud} is a set of points sampled from the surface of the objects, so it's detail depend largely on the density of the points. Point clouds can also store extra data pixel-wise, for example, color, normals, intensity or segmentation index.
+
+Because it's such a simple representation, it is very used in robotics and 3D vision, for example, in search and rescue robots, for mapping and navigation, in unmanned vehicles, for road segmentation and in bin-picking robots, for object segmentation. However, it is not adequate for scene reconstruction, because a realistic model requires a huge density of points, which is unfeasible for numerous reasons:
+
+\begin{enumerate}
+    \item Rendering point clouds is slow in modern graphic cards, because the rendering pipeline is not optimized for it, resulting in slow framerate, which then causes a poor experience for the user and unsuitable for VR. Despite new advancements in point-rendering algorithms, capable of rendering point clouds with billion points in commodity hardware \cite{wimmer2006}, it will always be a limiting factor for this model.
+    \item Some of the processing algorithms for point clouds have non-linear time complexity, so point clouds with many points can have long processing times. One of the most wide-spread solutions is to down-sample the point cloud to speed up the algorithms.
+    \item Large amounts of data are repeated in the point cloud, resulting in redundancy problems and large file sizes. For example, planar surfaces require the same density of points as any complex surface, while in meshes, the density of faces can be adjusted to the gradient of the surface.
+\end{enumerate}
+
+This problems are usually solved by performing a triangulation of the point cloud, a process where a mesh is produced, therefore solving all the problems inherent to the simplistic point cloud model. However, this process requires a fine point cloud, that usually require many man-hours of thorough processing, to yield acceptable results. That is why LiDAR Laser scanner are so valuable for 3D reconstruction, as it yields raw point clouds with a better definition than any other technology, requiring less post-processing work in the triangulation process.
+

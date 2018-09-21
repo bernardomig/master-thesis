@@ -1,0 +1,54 @@
+
+\begin{sidewaystable}
+    \caption{2D laser scanners used and their characteristics}
+    
+    \centering    
+    \begin{longtabu}{@{} >{\bfseries}X[] X[] X[] X[] X[] @{}}
+        \toprule
+                            & Sick~LMS100       & Sick~LMS200    & Hokuyo's~URG04LX  & Hokuyo~UTM-30LX    \\
+        \toprule
+        Application         & \multicolumn{4}{c}{Indoor}                                                        \\
+        Safety Class        & \multicolumn{4}{c}{Class 1 (eye-safe)}                                            \\
+        Light source        & Infrared (\SI{905}{\nano\meter})
+                            & Infrared (\SI{905}{\nano\meter})
+                            & Red (\SI{785}{\nano\meter})
+                            & Infrared (\SI{905}{\nano\meter})      \\
+        Aperture angle      & \SI{270}{\degree}
+                            & \SI{180}{\degree}
+                            & \SI{240}{\degree}
+                            & \SI{270}{\degree}    \\
+        Scanning Frequency  & \SI{10}{\hertz}
+                            & \SI{50}{\hertz}
+                            & \SI{10}{\hertz}
+                            & \SI{40}{\hertz}      \\
+        Angular Resolution  & \SI{0.25}{\degree}
+                            & \SI{0.25}{\degree}
+                            & \SI{0.36}{\degree}
+                            & \SI{0.25}{\degree}   \\
+        Working Range       & \SIrange{0.5}{20}{\meter} 
+                            & \SIrange{0}{80}{\meter}
+                            & \SIrange{0.02}{5.6}{\meter}
+                            & \SIrange{0.1}{30}{\meter} \\
+        Systematic Error    & \SI{\pm20}{\milli\meter} 
+                            & \SI{\pm15}{\milli\meter}
+                            & NA
+                            & NA \\
+        Statistical Error   & \SI{\pm 12}{\milli\meter}
+                            & \SI{\pm 5}{\milli\meter} 
+                            & \SI{\pm 3}{\percent} 
+                            & \SIrange{0.1}{10}{\meter}: \SI{\pm 30}{\milli\meter};
+                              \SIrange{10}{30}{\meter}: \SI{\pm 50}{\milli\meter} \\
+        Size                &
+                            &
+                            &
+                            & \\
+        Price               & 5000\euro
+                            &
+                            &
+                            &  \\
+        \bottomrule
+    \end{longtabu}
+
+
+    \label{table:laserscanners_characteristics}
+\end{sidewaystable}
