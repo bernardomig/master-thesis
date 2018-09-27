@@ -1,0 +1,205 @@
+\chapter{Scene Capture Methodology}
+\label{chapter:scene_capture_methodology}
+
+This chapter describes the concepts and methodology around a capture of a scene. To further explain the methodology, some core concepts need to be defined first:
+
+\begin{description}
+    
+    \item[Acquisition]
+        an acquisition is a collection of sensor data collected in a specific pose in the scene. This sensor data are ether images, taken from a camera, or laser scans, taken from a 2D laser scanner. Each one of this sensor data is always tagged with temporal and spatial information, to identify where and when this data was recorded.
+    
+    \item[Capture]
+        a capture is a collection of acquisitions taken from the same scene, from different poses and times.
+
+\end{description}
+
+A single acquisition has only limited information about the scene and is insufficient to create a complete reconstruction. This is often caused by occlusions, hardware limitations (like a small aperture, low range limits or low resolution) or environment factors (like reflective surfaces or lightning conditions). To circumvent this limitations, multiple acquisitions are taken from the same scene, to get enough data from it. However, this also comes with some challenges, for example, how to merge all the acquisitions and how to handle with all the redundant data.
+
+So, acquisitions and captures are different levels and each one has a different method and objectives. In an acquisition level, the focus is on how to operate the scanner and define how the data is recorded. In a capture level, the focus is on how to plan multiple acquisitions so a good reconstruction is possible. In the following sections, both acquisitions and captures are further explained.
+
+\begin{figure}
+    
+    \tikzset{
+        camera/.pic = {
+            \draw (-0.08, -0.08) rectangle (0.08, -0.25);
+            \draw (-0.06, -0.08) rectangle (0.06, 0);
+        },
+        laser/.pic = {
+            \draw (0, 0) circle (0.08);
+            \draw (-0.08, -0.08) rectangle (0.08, 0.08);
+            
+            \draw[-stealth] (0,0) -- (0, 0.40) node[anchor=east, scale=0.5] {$x$};
+            \draw[-stealth] (0,0) -- (-0.40, 0) node[anchor=east, scale=0.5] {$y$};
+        }
+    }
+
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+            \coordinate (camera) at (1,1);
+    
+            \node[scale=0.5, anchor=north west] at (camera) {camera};
+    
+            \draw (2, 2) rectangle +(1,1);
+    
+            \node[scale=0.5] at (2.5,2.5) {object}; 
+    
+            \draw (camera) pic[rotate=-45] {camera};
+            \draw[-stealth, rotate=-45, very thin] (camera) -- +(0, 0.6) node[scale=0.5, anchor=south west] {$z$};
+    
+            \draw[very thin, dashed] (camera) -- (1.6, 4);
+            \draw[very thin, dashed] (camera) -- (4, 1.6);
+
+            \draw[very thin, dotted] (camera) -- (2.5,4);
+            \draw[very thin, dotted] (camera) -- (4, 2.5);
+    
+            \pattern[pattern=north east lines] (2.5,4)--(4,4)--(4,2.5)--(3,2) -- (3,3) -- (2,3) -- cycle;
+
+        \end{tikzpicture}
+
+        \caption{Occlusion in a camera}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+
+            \coordinate (laser) at (1,1);
+
+            \draw (laser) pic {laser};
+
+            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+
+            \draw[very thin, dashed] (laser) -- (0,0.2);
+            \draw[very thin, dashed] (laser) -- (2.2, 0);
+
+            \draw[very thin, dotted] (laser) -- (4,3);
+            \draw[very thin, dotted] (laser) -- (4, 0);
+
+            \draw (2.5,0.5) rectangle (2.8,2);
+
+            \node[scale=0.5, rotate=90] at (2.65, 1.21) {wall};
+
+            \pattern[pattern=north east lines] (4,0) -- (4,3) -- (2.5, 2) -- (2.8,2) -- (2.8, 0.5)
+                -- (2.5, 0.5) -- cycle;
+    
+        \end{tikzpicture}
+
+        \caption{Occlusion in a laser scanner}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+
+            \coordinate (camera) at (1,2);
+            \draw (camera) pic[rotate=-90] {camera};
+            \draw[-stealth, very thin] (camera) -- +(0.6, 0) node[scale=0.5, anchor=south west] {$z$};
+
+            \foreach \a/\c in {1/0.8,2/1.4,3/2} {
+                \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 + \c);
+                \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 - \c)
+                    node[pos=0.8, above, scale=0.4] {$f_{\a}$};
+            };
+
+        \end{tikzpicture}
+
+        \caption{Different focal points of a camera}
+    \end{subfigure}
+    
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+            \clip (0,0) rectangle (4,4);
+
+            \foreach \a/\c in {180/0, 225/1, 270/2} {
+                \draw[very thin, dashed] (0, 1.5-\c) -- (2,1.5) node[pos=0.4, scale=0.4, sloped, anchor=south] {$r = \SI{\a}{\degree}$} -- (4, 1.5-\c);
+            };
+
+            \draw[ultra thin, dashdotted] (2, 1.5) -- +(0, 3);
+
+
+            \draw (2,1.5) pic {laser};
+    
+        \end{tikzpicture}
+
+        \caption{Radial aperture of a laser}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+            
+            \coordinate (laser) at (1,1);
+            \draw (laser) pic {laser};
+            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+
+            \draw[thin, dashed] (laser) -- (0,0);
+            \draw[thin, dashed] (laser) -- (2, 0);
+            
+            \fill[pattern=north east lines] (2, 3.3) -- (2, 2.5) arc (45+11:45-11:1.8) -- (2.5, 2) -- (3.3, 2) arc (45-21.2:45+21.2:2.5) -- cycle;
+            \draw (2, 2) rectangle (3.5, 3.5);
+
+            \begin{scope}
+                \clip (0,0) rectangle (4,4);
+                \draw[thin, dashed, dash pattern=on 2pt off 2pt] (laser) circle (1.8);
+                
+                \draw[thin, dashed, dash pattern=on 5pt off 5pt] (laser) circle (2.5);                
+            \end{scope}
+
+            \node[scale=0.5, anchor=east] at (2.8, 1) {$r_1$};
+            \node[scale=0.5, anchor=east] at (3.5, 1) {$r_2$};
+
+        \end{tikzpicture}
+
+        \caption{Range limitations}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+    
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+
+    \caption{Limitations of a single acquisition}
+
+\end{figure}
+
+\input{41-acquisition}
+
+% \input{42-capture}
+

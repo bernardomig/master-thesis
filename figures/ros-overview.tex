@@ -1,0 +1,65 @@
+\begin{figure}[h]
+    \label{figure:ros_overview}
+        
+        \caption{ROS architecture overview}
+    
+        \tikzstyle{ros_level}=[rectangle, draw, text centered, thick, text width=8em, rounded corners, font=\bfseries]
+        \tikzstyle{level}=[rectangle, draw, font=\bfseries, thick, rounded corners, inner xsep=0.5cm]
+        \tikzstyle{component}=[rectangle, draw, text width=9em]
+    
+    
+        \centering
+        \begin{tikzpicture}
+            
+            \node[ros_level] (ROS) {ROS};
+            \coordinate[below=0.4cm of ROS] (aux_node1);
+            \node[level, below=0.6cm of aux_node1] (computational_graph) {Computational Graph};
+            \node[level, left=2cm of computational_graph] (filesystem) {Filesystem};
+            \node[level, right=of computational_graph] (community) {Community};
+    
+            \draw[->] (ROS) -- (aux_node1) -- (computational_graph.north);
+            \draw[->] (ROS) -- (aux_node1) -| (filesystem.north);
+            \draw[->] (ROS) -- (aux_node1) -| (community);
+    
+            \coordinate[below=of filesystem.west, xshift=0.5cm] (aux_node2);
+            \coordinate[below=of computational_graph.west, xshift=0.5cm] (aux_node3);
+            \coordinate[below=of community.west, xshift=0.5cm] (aux_node4);
+    
+            \node[component, anchor=west, yshift=0cm] (meta_packages) at (aux_node2) {Meta Packages};
+            \node[component, anchor=west, yshift=-0.8cm] (packages) at (aux_node2) {Packages};
+            \draw[->] (filesystem.west) -- ++(-0.2cm, 0) |- (meta_packages.west);
+            \draw[->] (filesystem.west) -- ++(-0.2cm, 0) |- (packages.west);
+    
+            \node[component, anchor=west, yshift=0cm] (nodes) at (aux_node3) {Nodes};
+            \node[component, anchor=west, yshift=-0.8cm] (master) at (aux_node3) {Master};
+            \node[component, anchor=west, yshift=-1.6cm] (param_server) at (aux_node3) {Parameter Server};
+            \node[component, anchor=west, yshift=-2.4cm] (messages) at (aux_node3) {Messages};
+            \node[component, anchor=west, yshift=-3.2cm] (topics) at (aux_node3) {Topics};
+            \node[component, anchor=west, yshift=-4.0cm] (services) at (aux_node3) {Services};
+            \node[component, anchor=west, yshift=-4.8cm] (bags) at (aux_node3) {Bags};
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (nodes.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (master.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (param_server.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (messages.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (topics.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (services.west);
+            \draw[->] (computational_graph.west) -- ++(-0.2cm, 0) |- (bags.west);
+    
+            \node[component, anchor=west, yshift=0cm] (distributions) at (aux_node4) {Distributions};
+            \node[component, anchor=west, yshift=-0.8cm] (repositories) at (aux_node4) {Repositories};
+            \node[component, anchor=west, yshift=-1.6cm] (ros_wiki) at (aux_node4) {ROS Wiki};
+            \node[component, anchor=west, yshift=-2.4cm] (bug_ticket_system) at (aux_node4) {Bug Ticket System};
+            \node[component, anchor=west, yshift=-3.2cm] (mailing_lists) at (aux_node4) {Mailing Lists};
+            \node[component, anchor=west, yshift=-4.0cm] (ros_answers) at (aux_node4) {Ros Answers};
+            \node[component, anchor=west, yshift=-4.8cm] (blog) at (aux_node4) {Blog};
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (distributions.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (repositories.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (ros_wiki.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (bug_ticket_system.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (mailing_lists.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (ros_answers.west);
+            \draw[->] (community.west) -- ++(-0.2cm, 0) |- (blog.west);
+    
+        \end{tikzpicture}
+    
+    \end{figure}

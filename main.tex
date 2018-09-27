@@ -5,19 +5,26 @@
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{amsmath}
-\usepackage{cleveref}
+\usepackage[noabbrev, capitalize]{cleveref}
 \usepackage{cite}
 \usepackage{siunitx}
 \sisetup{per-mode = symbol}
 \usepackage{nicefrac}
 \usepackage[official]{eurosym}
 
-\usepackage{ctable}
-\usepackage{tabularx}
+\usepackage{bera}
+\usepackage{fancyvrb}
+\usepackage{listings}
 
-\usepackage{subfig}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes,shadows,arrows,backgrounds, patterns}
+
 \usepackage{graphicx}
 \graphicspath{{images/}}
+
+\usepackage{caption}
+\usepackage{subcaption}
 
 \usepackage{longtable}
 \usepackage{rotating}
@@ -32,15 +39,15 @@
 \listoffigures
 \listoftables
 
-\input{10-introduction}
-\input{20-theoretical-background}
-\input{30-experimental-infrastructure}
+% \input{10-introduction}
+% \input{20-theoretical-background}
+% \input{30-experimental-infrastructure}
 \input{40-scene-capture-methodology}
-\input{50-geometric-registration}
-\input{60-laser-extrinsic-calibration}
-\input{70-image-registration}
-\input{80-results}
-\input{90-conclusions}
+% \input{50-geometric-registration}
+% \input{60-laser-extrinsic-calibration}
+% \input{70-image-registration}
+% \input{80-results}
+% \input{90-conclusions}
 
 \bibliography{bibliography}{}
 \bibliographystyle{unsrt}

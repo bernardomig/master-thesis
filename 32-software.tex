@@ -1,19 +1,21 @@
 \section{Software}
 \label{section:software}
 
-This section presents the software developed or used in this work. The code was split into four repositories by their scope: the 3D mobile scanner runtime (\cref{section:software_lemonbot_software}) and the data processing algorithms (\cref{section:software_data_processing}).
+This section presents the software developed or used in this work. The code was split into two repositories: the 3D mobile scanner runtime (\cref{section:software_lemonbot_software}) and the data processing algorithms (\cref{section:software_data_processing}).
 
 \subsection{Lemonbot software}
 \label{section:software_lemonbot_software}
 
-One of the key components of robots is the software and most robots require large amounts of code to function. In older robot architectures, the code was a monolith responsible for every system of the robot, however this proven to be an inefficient approach, as it required a high understanding of the overall code by the developer, created dependencies and collisions between separated parts of the code and required a high maintenance of the code. This also created a single point of failure, because if just one component failed everything failed. 
+One of the key components of robots is the software and most robots require large amounts of code to function. In older robot architectures, the code was a monolith responsible for every system of the robot, however this proven to be an inefficient approach, as it required a high understanding of all the code by the developer, created dependencies and collisions between separated parts of the codebase and required a high maintenance. This also created a single point of failure, because if just one component failed everything failed. 
 
-This required a paradigm shift towards distributed systems. In a distributed system, each node runs isolated and interact through message passing. This systems are known to be:
+This required a paradigm shift towards distributed systems. In a distributed system, each node runs isolated and interact through message passing. This paradigm can be seen all across computer systems and a great example of this paradigm is the Erlang language runtime system, which was designed to be distributed, fault-tolerant and highly available. This system was used in the production of a high-reliable ATM switch - the Ericsson AXD301 - to achieve an outstanding \SI{99.9999999}{\percent} reliability.
+
+This systems are known to be:
 
 \begin{itemize}
     \item Fault-tolerant. A failure in one node does not affect other nodes, so there is not a overall system crash, unlike monolithic systems. Usually, because errors are transitive and not very frequent, a restart-on-failure policy is used to keep the downtime low.
     \item More generic. Because each node has a single responsibility, they tend to be more generic and detached to a single project, so integration in a new project can be easy. This is fundamental to reduce the need to "reinvent the wheel", therefore reducing the development cost and time of this complex systems.
-    \item Easier development. Each component can be developed be separate developers, with different languages and independent release cycles, because they do not have any dependency between each over and only a message specification needs to be agreed on between developer teams, making collaborative development possible. Debugging is also easier, because each node can be unit-tested separated with the "real environment".
+    \item Easier to develop. Each component can be developed be separate developers, with different languages and independent release cycles, because they do not have any dependency between each over and only a message specification needs to be agreed on between developer teams, making collaborative development possible. Debugging is also easier, because each node can be unit-tested separated with the "real environment".
     \item Decoupled. Each node runs in a isolated environment, to mitigate all the conflicts that can appear in a unknown environment, like resource utilization and shared library versioning. This can go as far as running each node in a separate virtual machine, by using containers.
 \end{itemize}
 
@@ -26,17 +28,21 @@ However, this systems now requires an underlying infrastructure, responsible for
     \item Configuration. Each parameter of the system is saved in a key-value store, accessible to all the nodes.
 \end{itemize}
 
-This paradigm can be seen all across computer systems and a great example of this paradigm is the Erlang language runtime system, which was designed to be distributed, fault-tolerant and highly available. This runtime system was used in the production of a high-reliable ATM switch - the Ericsson AXD301 - with achieved an outstanding \SI{99.9999999}{\percent} reliability. In robotics, such a system is being developed and it's quickly becoming the new standard: the Robot Operating System. 
-
 \subsubsection{ROS}
 
-ROS is a software architecture for robot development, providing a collection of tools, libraries and conventions to simplify the development of complex robot systems. It was originally created by the Stanford University in the mid-2000s and now is being widely adopted by most research communities.
+In robotics, such a system is being developed and it's quickly becoming the new standard: the Robot Operating System. ROS is a software architecture for robot development, providing a collection of tools, libraries and conventions to simplify the development of complex robot systems. It was originally created by the Stanford University in the mid-2000s and now is being widely adopted by most research communities.
 
-It's design principles follow the distributed system paradigm. In ROS, each node performs a certain function and communicates by a message-passing. Messages are exchanged in topics, described by both a topic name and a topic message, and each node can advertise (to publish new messages) or subscribe (to receive new messages). The advantage of this system is that multiple nodes can publish or subscribe to the same topic, which can be very useful. Each message has a header with a \textit{timestamp} and \textit{frame\_id}, to localize the source of the message both in space in time. A server-client architecture is also possible in ROS, but was used in this work.
+ROS is split into 3 levels, according to~\cite{fernandez_2015}: the \textit{filesystem} level, the \textit{the computational graph} level and the \textit{community} level. Each level is composed of several core components, that make the whole system work, as seen in \cref{figure:ros_overview}.
 
-This system also provides a hardware abstraction. For example, despite this work using different 2D laser scanners, the integration was really easy, because all the laser drivers publish the same message type (\textit{sensor\_msgs/Laserscan}), so all the other software communicating to this different lasers work without any change in the code.
+\input{figures/ros-overview}
+
+{\huge Maybe add more explanations???
+    - messages
+}
 
 \subsubsection{Coordinate Frames}
+
+One of the biggest challenges in robot programming is to keep track of all the coordinate frames present in the robot. This is challenging because the measurements of each transformation can be asynchronous and at different scanning rates, but queries are made between any two coordinate frames and at any time. To solve this problem, a special package in ROS - the tf package - stores all the measured transformations as a tree graph (more specifically, a directed acyclic graph), and interpolates between the measured transformations to obtain a approximate transformations at any time. 
 
 
 
