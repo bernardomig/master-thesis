@@ -1,0 +1,29 @@
+\chapter{Methodology for Geometry Reconstruction}
+
+
+\begin{figure}
+    
+    \centering
+    \begin{tikzpicture}
+        \node[draw, ellipse] (scene) {$scene$};
+        \node[draw, ellipse, right of=scene, xshift=3cm] (acquisition) {$acquisition$};
+        \node[draw, ellipse, right of=acquisition, xshift=3cm] (ptu) {$ptu$};
+        \node[draw, ellipse, right of=ptu, xshift=2cm] (laser) {$laser$};
+        
+        \draw[-latex] (scene) -- (acquisition)
+        node[midway, above] {$T_{scene}^{acq}$};
+        \draw[-latex] (acquisition) -- (ptu)
+        node[midway, above] {$T_{acq}^{ptu}$};
+        \draw[-latex] (ptu) -- (laser)
+        node[midway, above] {$T_{ptu}^{laser}$};
+    \end{tikzpicture}
+    
+    \caption{Transformation graph}
+    \label{figure:geometric-transformation-graph}
+\end{figure}
+
+\input{51-point-registration}
+\input{52-laser-extrinsic-calibration}
+\input{53-normal-estimation}
+\input{54-acquisition-registration}
+\input{55-filters}

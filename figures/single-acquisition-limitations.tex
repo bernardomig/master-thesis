@@ -1,0 +1,181 @@
+\begin{figure}
+    
+    \tikzset{
+        camera/.pic = {
+            \draw (-0.08, -0.08) rectangle (0.08, -0.25);
+            \draw (-0.06, -0.08) rectangle (0.06, 0);
+        },
+        laser/.pic = {
+            \draw (0, 0) circle (0.08);
+            \draw (-0.08, -0.08) rectangle (0.08, 0.08);
+            
+            \draw[-stealth] (0,0) -- (0, 0.40) node[anchor=east, scale=0.5] {$x$};
+            \draw[-stealth] (0,0) -- (-0.40, 0) node[anchor=east, scale=0.5] {$y$};
+        }
+    }
+
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+            \coordinate (camera) at (1,1);
+    
+            \node[scale=0.5, anchor=north west] at (camera) {camera};
+    
+            \draw (2, 2) rectangle +(1,1);
+    
+            \node[scale=0.5] at (2.5,2.5) {object}; 
+    
+            \draw (camera) pic[rotate=-45] {camera};
+            \draw[-stealth, rotate=-45, very thin] (camera) -- +(0, 0.6) node[scale=0.5, anchor=south west] {$z$};
+    
+            \draw[very thin, dashed] (camera) -- (1.6, 4);
+            \draw[very thin, dashed] (camera) -- (4, 1.6);
+
+            \draw[very thin, dotted] (camera) -- (2.5,4);
+            \draw[very thin, dotted] (camera) -- (4, 2.5);
+    
+            \pattern[pattern=north east lines] (2.5,4)--(4,4)--(4,2.5)--(3,2) -- (3,3) -- (2,3) -- cycle;
+
+        \end{tikzpicture}
+
+        \caption{Occlusion in a camera}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+
+            \coordinate (laser) at (1,1);
+
+            \draw (laser) pic {laser};
+
+            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+
+            \draw[very thin, dashed] (laser) -- (0,0.2);
+            \draw[very thin, dashed] (laser) -- (2.2, 0);
+
+            \draw[very thin, dotted] (laser) -- (4,3);
+            \draw[very thin, dotted] (laser) -- (4, 0);
+
+            \draw (2.5,0.5) rectangle (2.8,2);
+
+            \node[scale=0.5, rotate=90] at (2.65, 1.21) {wall};
+
+            \pattern[pattern=north east lines] (4,0) -- (4,3) -- (2.5, 2) -- (2.8,2) -- (2.8, 0.5)
+                -- (2.5, 0.5) -- cycle;
+    
+        \end{tikzpicture}
+
+        \caption{Occlusion in a laser scanner}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+
+            \coordinate (camera) at (1,2);
+            \draw (camera) pic[rotate=-90] {camera};
+            \draw[-stealth, very thin] (camera) -- +(0.6, 0) node[scale=0.5, anchor=south west] {$z$};
+
+            \foreach \a/\c in {1/0.8,2/1.4,3/2} {
+                \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 + \c);
+                \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 - \c)
+                    node[pos=0.8, above, scale=0.4] {$f_{\a}$};
+            };
+
+        \end{tikzpicture}
+
+        \caption{Different focal points of a camera}
+    \end{subfigure}
+    
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+            \clip (0,0) rectangle (4,4);
+
+            \foreach \a/\c in {180/0, 225/1, 270/2} {
+                \draw[very thin, dashed] (0, 1.5-\c) -- (2,1.5) node[pos=0.4, scale=0.4, sloped, anchor=south] {$r = \SI{\a}{\degree}$} -- (4, 1.5-\c);
+            };
+
+            \draw[ultra thin, dashdotted] (2, 1.5) -- +(0, 3);
+
+
+            \draw (2,1.5) pic {laser};
+    
+        \end{tikzpicture}
+
+        \caption{Radial aperture of a laser}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+            
+            \coordinate (laser) at (1,1);
+            \draw (laser) pic {laser};
+            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+
+            \draw[thin, dashed] (laser) -- (0,0);
+            \draw[thin, dashed] (laser) -- (2, 0);
+            
+            \fill[pattern=north east lines] (2, 3.3) -- (2, 2.5) arc (45+11:45-11:1.8) -- (2.5, 2) -- (3.3, 2) arc (45-21.2:45+21.2:2.5) -- cycle;
+            \draw (2, 2) rectangle (3.5, 3.5);
+
+            \begin{scope}
+                \clip (0,0) rectangle (4,4);
+                \draw[thin, dashed, dash pattern=on 2pt off 2pt] (laser) circle (1.8);
+                
+                \draw[thin, dashed, dash pattern=on 5pt off 5pt] (laser) circle (2.5);                
+            \end{scope}
+
+            \node[scale=0.5, anchor=east] at (2.8, 1) {$r_1$};
+            \node[scale=0.5, anchor=east] at (3.5, 1) {$r_2$};
+
+        \end{tikzpicture}
+
+        \caption{Range limitations}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+    
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+    
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw (0,0) rectangle (4,4);
+        \end{tikzpicture}
+
+        \caption{yet}
+    \end{subfigure}
+
+    \caption{Limitations of a single acquisition}
+
+\end{figure}

@@ -5,14 +5,16 @@
 \usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{amsmath}
+
+\usepackage{biblatex}
+\bibliography{bibliography.bib}
+
 \usepackage[noabbrev, capitalize]{cleveref}
-\usepackage{cite}
 \usepackage{siunitx}
 \sisetup{per-mode = symbol}
 \usepackage{nicefrac}
 \usepackage[official]{eurosym}
 
-\usepackage{bera}
 \usepackage{fancyvrb}
 \usepackage{listings}
 
@@ -40,16 +42,14 @@
 \listoftables
 
 % \input{10-introduction}
-% \input{20-theoretical-background}
+% \input{20-state-of-art}
 % \input{30-experimental-infrastructure}
 \input{40-scene-capture-methodology}
-% \input{50-geometric-registration}
-% \input{60-laser-extrinsic-calibration}
+\input{50-geometric-registration}
 % \input{70-image-registration}
 % \input{80-results}
 % \input{90-conclusions}
 
-\bibliography{bibliography}{}
-\bibliographystyle{unsrt}
+\printbibliography
 
 \end{document}
