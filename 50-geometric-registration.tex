@@ -1,25 +1,6 @@
 \chapter{Methodology for Geometry Reconstruction}
 
-\begin{figure}
-    
-    \centering
-    \begin{tikzpicture}
-        \node[draw, ellipse] (scene) {$scene$};
-        \node[draw, ellipse, right of=scene, xshift=3cm] (acquisition) {$acquisition$};
-        \node[draw, ellipse, right of=acquisition, xshift=3cm] (ptu) {$ptu$};
-        \node[draw, ellipse, right of=ptu, xshift=2cm] (laser) {$laser$};
-        
-        \draw[-latex] (scene) -- (acquisition)
-        node[midway, above] {$T_{scene}^{acq}$};
-        \draw[-latex] (acquisition) -- (ptu)
-        node[midway, above] {$T_{acq}^{ptu}$};
-        \draw[-latex] (ptu) -- (laser)
-        node[midway, above] {$T_{ptu}^{laser}$};
-    \end{tikzpicture}
-    
-    \caption{Transformation graph}
-    \label{figure:geometric-transformation-graph}
-\end{figure}
+This chapter present the methodology to reconstruct the geometry of the scene. In \cref{section:point-registration}, the laser scans of each acquisition are transformed into point clouds. In \cref{section:laser-extrinsic-calibration}, two calibration methods, one of which was developed in this work, are described to obtain the extrinsic calibration of the laser scanner. \cref{section:normal-estimation} describes a method to estimate the normals, based on the structure of the point cloud. In \cref{section:acquisition-registration}, a method to find the transformations between acquisitions is described, to merge the acquisitions into one point cloud. Finally, in \cref{section:filters}, three point cloud filters used in this work are described.
 
 \input{51-point-registration}
 \input{52-laser-extrinsic-calibration}

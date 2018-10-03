@@ -6,7 +6,9 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 
-\usepackage{biblatex}
+\usepackage{arydshln}
+
+\usepackage[citestyle=numeric]{biblatex}
 \bibliography{bibliography.bib}
 
 \usepackage[noabbrev, capitalize]{cleveref}
@@ -18,9 +20,12 @@
 \usepackage{fancyvrb}
 \usepackage{listings}
 
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
 
 \usepackage{tikz}
-\usetikzlibrary{positioning,shapes,shadows,arrows,backgrounds, patterns}
+\usetikzlibrary{positioning,shapes,shadows,arrows,backgrounds, patterns, shapes.multipart, calc}
 
 \usepackage{graphicx}
 \graphicspath{{images/}}
@@ -44,7 +49,7 @@
 % \input{10-introduction}
 % \input{20-state-of-art}
 % \input{30-experimental-infrastructure}
-\input{40-scene-capture-methodology}
+% \input{40-scene-capture-methodology}
 \input{50-geometric-registration}
 % \input{70-image-registration}
 % \input{80-results}
