@@ -34,11 +34,11 @@ Further on, each point is registered in the referencial of the acquisition. Acco
         \node[draw, ellipse, right of=ptu, xshift=2cm] (laser) {$laser$};
         
         \draw[-latex] (scene) -- (acquisition)
-        node[midway, above] {$T_{scene}^{acq}$};
+        node[midway, above] {$\TF{scene}{acq}$};
         \draw[-latex] (acquisition) -- (ptu)
-        node[midway, above] {$T_{acq}^{ptu}$};
+        node[midway, above] {$\TF{acq}{ptu}$};
         \draw[-latex] (ptu) -- (laser)
-        node[midway, above] {$T_{ptu}^{laser}$};
+        node[midway, above] {$\TF{ptu}{laser}$};
     \end{tikzpicture}
     
     \caption{Transformation graph}
@@ -53,8 +53,8 @@ Further on, each point is registered in the referencial of the acquisition. Acco
         \end{array}    
     \right)
     =
-    T_{acq}^{ptu}
-    \cdot T_{ptu}^{laser}
+    \TF{acq}{ptu}
+    \cdot \TF{ptu}{laser}
     \cdot
     \left(
         \begin{array}{c}

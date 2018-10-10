@@ -55,7 +55,7 @@ Finally, the extrinsic calibration can be calculated as in \cref{eqn:radlocc-ful
 
 \begin{equation}
     \label{eqn:radlocc-full-calibration}
-    T_{calibration} = T_{PTU}^{camera} \cdot T_{camera}^{laser}
+    \mathcal{T}_{calibration} = \TF{PTU}{camera} \cdot \TF{camera}{laser}
 \end{equation}
 
 \subsection{Proposed Method}
@@ -63,7 +63,7 @@ Finally, the extrinsic calibration can be calculated as in \cref{eqn:radlocc-ful
 
 A new method was developed in this work to calibrate the laser scanner in this system. One of the key differences to the previous method (in \cref{section:radlocc-method}) is that the calibration is done only using the laser range data, and the calibration from the PTU to the laser scanner is directly find. The hypothesis that this method relies, is that in a good calibration the deviation of a point set is minimal. In other words, in a point set representing a planar surface, the deviation from the points to the planar surface is the lowest, if the extrinsic calibration is the correct one.
 
-This method is, therefore, an optimization problem. For each extrinsic calibration transformation $T$, corresponds a point cloud $P$, following the method shown on \cref{section:point-registration}. Then this point cloud is evaluated by a loss function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $T$ that minimizes the loss function. Each one of this steps is described in detail next.
+This method is, therefore, an optimization problem. For each extrinsic calibration transformation $\mathcal{T}$, corresponds a point cloud $\mathcal{P}$, following the method shown on \cref{section:point-registration}. Then this point cloud is evaluated by a loss function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $\mathcal{T}$ that minimizes the loss function. Each one of this steps is described in detail next.
 
 \subsubsection{Segmentation}
 
@@ -108,7 +108,7 @@ The parameters in this calibration should define a geometric transformation in s
 
 \begin{equation}
     \label{eqn:transformation-matrix}
-    T = \left[
+    \mathcal{T} = \left[
         \begin{array}{cccc}
             r_{11} & r_{12} & r_{13} & t_x \\
             r_{21} & r_{22} & r_{23} & t_y \\
