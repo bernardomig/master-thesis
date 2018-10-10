@@ -1,0 +1,38 @@
+\section{Color Fusion}
+\label{section:color-fusion}
+
+In an capture with $N_a$ acquisitions, each one with $N_i$ images, the total number of images account to $N_a \times N_i$. Each one of this images will yield a partial colorized point cloud, according to \cref{section:color-registration}, and now the point clouds need to be merged into a final point cloud. More specifically, each point $p_i$ has multiple correspondent colors, one for each registered image. The method here described determines the final color in a point-wise fashion and does not account for the neighbor points.
+
+Let us admit that the point $p$ has a set $C = \{c_i|i=1\dots k\}$ of $k$ registered colors. The final color of this point $c$ should be a combination of the colors in $C$. The first and easier approach is to average the colors to obtain the color $c$, as seen in \cref{eqn:color-mean}. However, this is a poor heuristic as it considers that all colors have the same error, which is not true. For example, an image taken closer to an object is more precise than one taken away from it. 
+
+\begin{equation}
+    \label{eqn:color-mean}
+    c = \frac{1}{k} \sum_{i}^{k}{c_i}
+\end{equation}
+
+A common solution for this mean limitation is to use an weighted mean, shown in \cref{eqn:weighted-mean}. The $w_i$ are the weights for each color and should reflect the quality of each color, because colors with bigger weight have a bigger influence in the final color.
+
+\begin{equation}
+    \label{eqn:weighted-mean}
+    c = \frac{\sum_{i}^{k}{w_i c_i}}{\sum_{i}^{k}{w_i}}
+\end{equation}
+
+In this work, the quality measurement was determined based on an heuristic that depends on two factors, that are obtained in the color registration phase (\cref{section:color-registration}).
+
+The first factor $f_1$ depends on the distance $d$ from the camera to the point and on the optimal focus point $d_f$. $f_1$ is smaller the bigger the distance between $d$ and $d_f$. The function used was the gaussian centered on $d_f$. The second factor $f_2$ depends on the distance from the pixel coordinates $(u,v)$ to the center of the optical center $(c_x, c_y)$. Again, a gaussian distribution was used to calculate $f_2$, and a bigger distance also yields a smaller $f_2$. In brief, both factors $f_1$ and $f_2$ are calculated according to \cref{eqn:heuristic-f1,eqn:heuristic-f2}. The parameters $\alpha$ and $\beta$ determine how wide the gaussian function is, so points farther from the peak point influence more or less. 
+
+\begin{align}
+    \label{eqn:heuristic-f1}
+    f_1 & = e^{-\frac{(d-d_f)^2}{2\alpha^2}} \\
+    \label{eqn:heuristic-f2}
+    f_2 & = e^{-\frac{(u-c_x)^2 + (v-c_y)^2}{2\beta^2}} \\
+\end{align}
+
+The two factors are then combined into the weight $w$ factor of the color, based on a linear combination, dependent on a parameter $s$, which determines the influence of each factor, as seen on \cref{eqn:heuristic-w}. 
+
+\begin{equation}
+    \label{eqn:heuristic-w}
+    w = s f_1 + (1-s) f_2
+\end{equation}
+
+In conclusion, for each point $p_i$ the color $c_i$ is attributed, based on the registered colors of each image. The fusion of all this colors is based on a weighted mean, where the weight of each color is determined by an heuristic that considers the location of the color in pixel coordinates and the distance of the point to the camera, in order to benefit points that have a better quality in the measurement, for example, points that are in focus or points that are closer to the camera center. This process is repeated for all the points of the point cloud until every point has a color (however, some points have no color registered, because no color was registered before).

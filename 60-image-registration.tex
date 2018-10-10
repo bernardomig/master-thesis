@@ -1,22 +1,12 @@
 \chapter{Methodology for Image Registration}
 \label{section:methodology-for-image-registration}
 
-\section{Pixel Registration}
-\label{section:pixel-registration}
+This chapter describes the methodology for image registration, that is, the process that colorizes (defines the color) the point cloud based on the images taken in the acquisitions. This method can be split into two parts: the Color Registration (\cref{section:color-registration}), where the process is described per-image and each image colorizes a portion of the point cloud, and the Color Fusion (\cref{section:color-fusion}), where all the colorized point cloud partials are merged into the final colorized point cloud. Also, the pixel registration relies on a camera calibration, both the intrinsic calibration and also the extrinsic, so two methods are shown to obtain this calibration (\cref{section:camera-intrinsic-calibration,section:camera-extrinsic-calibration}).
 
-\subsection{Point Projection}
-\label{section:point-projection}
+\input{61-color-registration}
 
-\subsection{Occluded Point Rejection}
-\label{section:occluded-point-rejection}
+\input{62-color-fusion}
 
-\subsection{Color Attribution}
-\label{section:color-attribution}
+\input{63-camera-intrinsic-calibration}
 
-\subsection{Color Fusion}
-\label{section:color-fusion}
-
-\input{66-camera-intrinsic-calibration}
-
-\section{Camera Extrinsic Calibration}
-\label{section:camera-extrinsic-calibration}
+\input{64-camera-extrinsic-calibration}
