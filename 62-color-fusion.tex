@@ -23,9 +23,9 @@ The first factor $f_1$ depends on the distance $d$ from the camera to the point 
 
 \begin{align}
     \label{eqn:heuristic-f1}
-    f_1 & = e^{-\frac{(d-d_f)^2}{2\alpha^2}} \\
+    f_1 & = \mathrm{exp}\left(-\frac{(d-d_f)^2}{2\alpha^2}\right) \\
     \label{eqn:heuristic-f2}
-    f_2 & = e^{-\frac{(u-c_x)^2 + (v-c_y)^2}{2\beta^2}} \\
+    f_2 & = \mathrm{exp}\left(-\frac{(u-c_x)^2 + (v-c_y)^2}{2\beta^2}\right) \\
 \end{align}
 
 The two factors are then combined into the weight $w$ factor of the color, based on a linear combination, dependent on a parameter $s$, which determines the influence of each factor, as seen on \cref{eqn:heuristic-w}. 

@@ -114,6 +114,7 @@
         \centering
         \begin{tikzpicture}
             \draw (0,0) rectangle (4,4);
+            \clip (0,0) rectangle (4,4);
             
             \coordinate (laser) at (1,1);
             \draw (laser) pic {laser};
@@ -143,37 +144,28 @@
         \centering
         \begin{tikzpicture}
             \draw (0,0) rectangle (4,4);
+            \clip (0,0) rectangle (4,4);
+
+            \coordinate (laser) at (1,1);
+            \draw (laser) pic {laser};
+            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+
+
+            \foreach \a in {0, 5, ..., 180} {
+                \def\x{{cos(\a)}};
+                \def\y{{sin(\a)}};
+                \draw[dashed] ($(laser) + 0.6*(\x, \y)$) -- ($(laser) + 5*(\x, \y)$);
+            };
+
+            \draw[fill=white, draw=black] (1, 3) rectangle ++(0.7,0.7)
+                node[midway, scale=0.5] {obj. 1};
+
+            \draw[fill=white, draw=black] (2, 1.5) rectangle ++(0.7, 0.7)
+                node[midway, scale=0.5] {obj. 2};
+
         \end{tikzpicture}
 
-        \caption{yet}
-    \end{subfigure}
-
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \begin{tikzpicture}
-            \draw (0,0) rectangle (4,4);
-    
-    
-        \end{tikzpicture}
-
-        \caption{yet}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \begin{tikzpicture}
-            \draw (0,0) rectangle (4,4);
-    
-        \end{tikzpicture}
-
-        \caption{yet}
-    \end{subfigure}
-    \begin{subfigure}[t]{0.3\textwidth}
-        \centering
-        \begin{tikzpicture}
-            \draw (0,0) rectangle (4,4);
-        \end{tikzpicture}
-
-        \caption{yet}
+        \caption{Radial resolution}
     \end{subfigure}
 
     \caption{Limitations of a single acquisition}

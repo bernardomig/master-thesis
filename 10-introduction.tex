@@ -1,28 +1,49 @@
 \chapter{Introduction}
 
-Digital reconstruction of three dimensional scenes is a field that gained a high importance in areas like architecture, robotics, archeology, autonomous driving and virtual reality.  The process of digitalization of the environment into a 3D model still poses a lot of challenges, requiring a lot of processing and merging data from different sensors to get an accurate representation. 
+Digital reconstruction of three dimensional scenes is a field that gained a high importance in areas like architecture, robotics, archeology and autonomous driving. As an example, virtual reality technologies allows high-detail and high-resolution models to be experiences in a immersive 3D experience, and the technology is becoming available for the general public, as prices for this 3D headsets and VR-ready phones decrease. This new technologies create a demand for reconstruction technology and new algorithms that are accurate and of high quality.
 
-\section{Objectives}
+\section{Motivation}
 
-Despite all the work done, there is still no perfect solution. 3D reconstruction is still a challenge, because real scenes are very complex and sensors have errors and noise. Past experience tells that a single sensor is not enough to model real environments, so currently the process lies into using multiple sensors and trying to merge the data from all the sensors, in order to capture a more realistic model.
+% mudar isto sff
+
+Despite all the work done, there is still no perfect solution. 3D reconstruction is still a challenge, because real scenes are very complex and measurements are subjected to errors and noise. Past experience tells that a single sensor is not enough to model real environments, so currently the process lies into using multiple sensors and trying to merge the data from all the sensors, in order to capture a more realistic model.
 
 However, this introduces a set of other problems that are inherent to this approach. For example, the data from the different sensors need to be merged accurately. For example, the positions of all the sensors need to be known accurately, which means that the calibration processes need to be more robust and precise.
 
-So, we aim to develop a 3D sensor that captures both range scans as well as color images, which is now a very recurrent and successful approach. This is because both sensors complementing each other, one providing high definition and accurate spatial resolution (Laser scanner) and the other providing the high resolution color map.
+Also, current reconstruction algorithms require a large amount of manual work, which means that a reconstruction require many man-hours to be processed, which is unfeasible for most applications. An automatized reconstruction method is still a challenge today, but new algorithms could allow it, which would make reconstruction work more accessible.
 
-The main objectives are:
+Nowadays, 3D reconstruction software is even available in smartphones, usually targeted for Augmented Reality applications. However, the 3D reconstructions are not accurate and the resulting models are far from perfect.
 
-\begin{enumerate}
-    \item Development of an algorithm capable of creating a 3D colorized point cloud. It is required that all geometry and color registration be accurate and precise and the model need to have a high density of points, in order to register most of the details of the scene.
+\section{Problem Description}
 
-    \item Creating a dataset consisting of multiple acquisitions for subsequent use by other projects in 3D processing and vision algorithms.
+Recently, Lidar laser scanners became more available and, because of their properties, as their high precision and high range, became an unmatched technology for 3D reconstruction. The lidar lasers are available as 2D laser scanners or 3D laser scanners, like the Velodyne. Despite their immense potential, 3D laser scanner is still a very expensive solution and cheaper solutions are comprised of a cheaper 2D laser scanner mounted on a moving frame. This solution, despite its low cost, can achieve good results, but requires a fine calibration. 
 
-    \item Development of an automatic and easy-configurable mobile robot for easy and reliable captures, to use for subsequent work.
-\end{enumerate}
+Also, laser scanner do not register the color information, so a common practice is to pair the laser scanner with a camera to get both color and geometric data. This method also requires a fine calibration between both sensors to merge the data from both sensors. 
 
-What is not covered in this work is:
+\section{Objectives}
 
-\begin{enumerate}
-    \item Processing and vision algorithms for 3d models. We do not include this in this work because the main objective is creating dense and accurate point clouds, not processing them. However, we hope that this work provide ways to obtain reliable data for 3D-based algorithms.
-    \item Generating 3D mesh models. Mesh models are better for representing a scene, and algorithms like Delaunay triangulation and Ball-pivoting triangulation algorithms allow it to easily create a mesh from a point cloud. Nonetheless, it requires huge amounts of preprocessing and post processing to get a good 3D mesh model. Yet, the 3D point clouds resulting in this work can be processed to create a 3D mesh model.
-\end{enumerate}
+The objective is to develop a fully integrated solution for 3D acquisition using both laser and image data. This objective was divided into four main objectives.
+
+The first objective was to develop a mobile 3D scanner, consisted of a laser scanner and a camera, and capable of recording data from both sensors in a fast and semi-autonomous way.
+
+The second objective was to define a methodology to record the data from the scene. This methodology should take into account the limitations of both sensors and try to minimize their effect in the final result.
+
+The third objective was to develop a set of methods to reconstruct the geometry of the scene reliably. The main challenge is the extrinsic calibration of the laser, because it is fundamental for a reliable reconstruction. So, a new calibration method was developed to achieve the wanted results.
+
+The fourth and final objective was to develop a set of methods to merge the image data with the geometry of the scene, to reconstruct the color.
+
+The final result is then, a point cloud with color and geometric information.
+
+\section{Document Outline}
+
+This dissertation is composed of eight chapters, which are arranged as follows:
+
+\begin{description}
+    \item[Introduction] The current chapter, in which the description of the problem is shown and the objectives of this work are defined.
+    \item[State of Art] Describes the technologies and solutions found in the field of 3D reconstruction, both commercial and academic, as well of a small technical background on this solutions.
+    \item[Experimental Infraestructure] Introduces all the software and hardware used to develop this work. In particular, the mobile robot for 3D scanner is described.
+    \item[Methodology for Scene Capture] Describes the methods and algorithms used to reconstruct the geometry of the scene, using the laser scan data recorded.
+    \item[Methodology for Image Reconstruction] Describes the methods and algorithms used to reconstruct the color information of the scene, using the camera images recorded.
+    \item[Result and Discussion] Presents and discusses the experimental results obtained in this work.
+    \item[Conclusion and Future Work] Summarizes the overall work developed and present possible future work.
+\end{description}

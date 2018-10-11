@@ -55,7 +55,7 @@ Finally, the extrinsic calibration can be calculated as in \cref{eqn:radlocc-ful
 
 \begin{equation}
     \label{eqn:radlocc-full-calibration}
-    \mathcal{T}_{calibration} = \TF{PTU}{camera} \cdot \TF{camera}{laser}
+    \mathcal{T}_{calibration} = \TF{PTU}{laser} = \TF{PTU}{camera} \cdot \TF{camera}{laser}
 \end{equation}
 
 \subsection{Proposed Method}
@@ -63,20 +63,20 @@ Finally, the extrinsic calibration can be calculated as in \cref{eqn:radlocc-ful
 
 A new method was developed in this work to calibrate the laser scanner in this system. One of the key differences to the previous method (in \cref{section:radlocc-method}) is that the calibration is done only using the laser range data, and the calibration from the PTU to the laser scanner is directly find. The hypothesis that this method relies, is that in a good calibration the deviation of a point set is minimal. In other words, in a point set representing a planar surface, the deviation from the points to the planar surface is the lowest, if the extrinsic calibration is the correct one.
 
-This method is, therefore, an optimization problem. For each extrinsic calibration transformation $\mathcal{T}$, corresponds a point cloud $\mathcal{P}$, following the method shown on \cref{section:point-registration}. Then this point cloud is evaluated by a loss function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $\mathcal{T}$ that minimizes the loss function. Each one of this steps is described in detail next.
+This method is, therefore, an optimization problem. For each extrinsic calibration transformation $\mathcal{T}$, corresponds a point cloud $\mathcal{P}$, following the method shown on \cref{section:point-registration}. Then this point cloud is evaluated by a loss function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $\mathcal{T}$ that minimizes the loss function. Each one of these steps is described in detail next.
 
 \subsubsection{Segmentation}
 
 This calibration method uses an acquisition as its dataset, which is a big advantage. Also, a point cloud has to be generated using a estimation of the calibration transformation. This point cloud does not have to be geometrically accurate but needs to be sufficient for the plane segmentation, which is done manually prior to the calibration. In this work, the software CloudCompare was used to segment the point cloud into multiple planes, and the data was saved as a scalar index in each point. An example of a segmentation can be seen in \cref{figure:cluster-segmentation-1}, where each cluster is represented with a different color.
 
-The segmentation was not done automatically because most segmentation algorithms, for example the RANSAC algorithm, were not capable of achieving a good segmentation for the initial estimate, because the point cloud had too much deformation. On the other hand, manual segmentation is easy and accurate, considering that it is a one-time process.
+The segmentation was not done automatically because most segmentation algorithms, for example the RANSAC algorithm, were not capable of achieving a reliable segmentation for the initial estimate, because the point cloud had significant deformation. In addition, manual segmentation is easy to do and accurate, considering that it is a one-time process.
 
 During the optimization, this segmentation serves as a blueprint for all the segmentations. Each point cloud is generated in the same way, so the sequence of points is always the same. Therefore, it is always possible to match any point on the generated point cloud to the point in the segmented point cloud, and get the corresponding cluster index for all the points.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=.8\textwidth]{cluster-segmentation-1}
-    \caption{Example of a plane segmentation. Each color represents a cluster}
+    \caption{Example of a plane segmentation, where each color represents a cluster}
     \label{figure:cluster-segmentation-1}
 \end{figure}
 
@@ -84,7 +84,7 @@ During the optimization, this segmentation serves as a blueprint for all the seg
 
 A loss function, or cost function, is a measure in optimization that compares the result of a model with its expected result, and returns a value that signifies the difference between the two. More concretely, in this calibration the loss function has two components: the loss function per cluster and the loss function per point cloud, which combines the loss of all the clusters. 
 
-To start with, the plane equation for each cluster is found. The same method as in \cref{section:normal-estimation}, Principal Component Analysis, is used. First the centroid of each plane is found, which is the same as the mean value of all the points $\bar{p}$ (\cref{eqn:centroid-plane}). Then, the covariance matrix $\mathcal{C}$ is calculated (\cref{eqn:covariance-plane}).
+To start with, the plane equation for each cluster is found, using the same method as in \cref{section:normal-estimation}, the Principal Component Analysis, or PCA. First the centroid of each plane is found, which is the same as the mean value of all the points $\bar{p}$ (\cref{eqn:centroid-plane}). Then, the covariance matrix $\mathcal{C}$ is calculated (\cref{eqn:covariance-plane}).
 
 \begin{align}
     \bar{p} = & \sum_{i}{p_i}
@@ -93,7 +93,7 @@ To start with, the plane equation for each cluster is found. The same method as 
         \label{eqn:covariance-plane}
 \end{align}
 
-Then, the principal axes of the plane is find by an eigen decomposition of the covariance matrix. The smallest eigenvalue $\lambda_3$ will be the variance $\sigma^2$ of the cluster. In other words, $\sigma^2$ is the mean square of the orthogonal distance of all points in the cluster to the plane. So, $\sigma^2$ can be quantitatively to measure the loss for each plane. Formally, let us admit that the $\sigma^2$ has two components: the statistical error of the laser sensor $\sigma^2_{sensor}$, which is not affected by the calibration and a second component $\sigma^2_{calib}$, which results from the calibration error. Thus, it is possible that by minimizing $\sigma$, a exact calibration can be obtained. Therefore, the loss of each cluster will be the $\sigma$ value, which is also known as the Root Mean Square Deviation or RMS.
+Then, the principal axes of the plane is find by an eigen decomposition of the covariance matrix. The smallest eigenvalue $\lambda_3$ will be the variance $\sigma^2$ of the cluster. In other words, $\sigma^2$ is the mean square of the orthogonal distance of all points in the cluster to the plane. So, $\sigma^2$ can be a quantitative factor to measure the loss for each plane. Formally, let us admit that the $\sigma^2$ has two components: the statistical error of the laser sensor $\sigma^2_{sensor}$, which is not affected by the calibration and a second component $\sigma^2_{calib}$, which results from the calibration error. Thus, it is possible that by minimizing $\sigma^2$, a exact calibration can be obtained. For this calibration, however, the value $\sigma$ was used instead of $\sigma^2$, which is known as the Root Mean Square Deviation, or RMS. Therefore, the loss of each cluster will be the $\sigma$ value.
 
 Next, the losses of the clusters are combined into a scalar value, which is the loss of the point cloud. The method found was to, again, calculate the RMS of the values of the partial losses $loss_i$, according to the \cref{eqn:rms}. This value is expected to be minimal when all the partial losses are minimal which, according to this hypothesis, corresponds to a correct calibration.
 
@@ -118,7 +118,7 @@ The parameters in this calibration should define a geometric transformation in s
     \right]
 \end{equation}
 
-However, not all representations are suitable for an optimization. In fact, in~\cite{hornegger99} the term \textbf{fair parameterization} was introduced: a parameterization is called fair, if it does not introduce more numerical sensitivity than the one inherent to the problem itself. Therefore, fair parameterization are a requirement for optimizations, as it increases the changes of convergence. For example, euler angles, which are probably the most used angle parameterization, are not suitable for optimizations, because they do not yield smooth movements, each rotation is non-unique and, most notably, there are singularities, so-called \textit{gimbal-lock} singularities, where one DOF is lost~\cite{schmidt01}. Also, quaternions are not suitable for optimizations, because quaternions have $4$ components which are norm-1 constrained. Despite being a fair parameterization, quaternions introduce some complexity in the algorithm to handle the norm-1 constrain, so they are not usually used for optimizations.
+However, not all representations are suitable for an optimization. In fact, in~\cite{hornegger99} the term fair parameterization was introduced: a parameterization is called fair, if it does not introduce more numerical sensitivity than the one inherent to the problem itself. Therefore, fair parameterization are a requirement for optimizations, as it increases the changes of convergence. For example, euler angles, which are probably the most used angle parameterization, are not suitable for optimizations~\cite{schmidt01}, because they do not yield smooth movements, each rotation is non-unique and, most notably, there are singularities, so-called \textit{gimbal-lock} singularities, where one degree of freedom is lost~\cite{schmidt01}. Also, quaternions are not suitable for optimizations, because quaternions have $4$ components which are norm-1 constrained. Despite being a fair parameterization, quaternions introduce some complexity in the algorithm to handle the norm-1 constrain, so they are not usually used for optimizations~\cite{schmidt01}.
 
 The axis/angle parameterization is the most widely used to represent a rotation in an optimization, as it is a fair parameterization and has only three components. Any rotation can be represented as a rotation around an axis $a$, by an angle $\theta$. Since $a$ only represent the direction of the rotation (hence only has 2 degrees of freedom), it can be combined with the angle $\theta$ into a single vector $\omega$, as in \cref{eqn:axis-angle}.
 
@@ -154,7 +154,7 @@ In conclusion, the parameter vector will have 6 values: 3 representing the trans
 
 \subsubsection{Optimizer}
 
-The optimization is performed by the Powell's method. This method finds a local minimum of a multi-dimensional unconstrained function, and does not require the gradient of this function, which fits this particular optimization. This method is implemented in the python scientific library SciPy.
+The optimization is performed by the Powell's method, described in \cite{powell_method}. This method finds a local minimum of a multi-dimensional unconstrained function, and does not require the gradient of this function, which fits this particular optimization. This method is implemented in the python scientific library SciPy~\cite{scipy-powell}.
 
 \subsubsection{Overview}
 

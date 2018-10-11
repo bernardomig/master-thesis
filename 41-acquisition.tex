@@ -13,22 +13,15 @@ Once the movement of the scanner was defined, the next step is to define when to
 
 \subsection{Parameterization Considerations}
 
-This methodology has the following implications:
-
-\begin{itemize}
+This methodology has the numerous implications.
         
-    \item The pan and tilt range is only limited by the PTU capabilities, but it beneficial to use the maximum range possible, in order to get as much data as it is possible, even if some data is redundant. In this work, the mobile scanner have a laser configuration such that the interpolation if different tilt angles is almost exclusively redundant data. However, this improves the final reconstruction by increasing the density of the point cloud.
+First, the pan and tilt range is only limited by the PTU capabilities, but it beneficial to use the maximum range possible, in order to get as much data as it is possible, even if some data is redundant. In this work, the mobile scanner have a laser configuration such that the interpolation if different tilt angles is almost exclusively redundant data. However, this improves the final reconstruction by increasing the density of the point cloud.
                     
-    \item The number of laser scans recorded is going to depend on the pan speed and the frequency of scanning of the 2D laser scanner. So, it is expected that a laser scanner with a lower scanning frequency to require a slower speed compared to a faster one, to get the same results. 
+Second, the number of laser scans recorded is going to depend on the pan speed and the frequency of scanning of the 2D laser scanner. So, it is expected that a laser scanner with a lower scanning frequency to require a slower speed compared to a faster one, to get the same results. 
                         
-    \item The camera used in this work did not have stabilization so, to get sharp images, a complete immobilization was required in each waypoint. This was achieved by setting a time between the stop of all joints and the capture of the image by the camera. In this work, a time of \SI{1.5}{\second} was enough.
+Third, the camera used in this work did not have stabilization so, to get sharp images, a complete immobilization was required in each waypoint. This was achieved by setting a time between the stop of all joints and the capture of the image by the camera. In this work, a time of \SI{1.5}{\second} was enough.
                         
-    \item The waypoints' angle increment has to be enough so that part of the previous image appear in the next image, so that every observable part of the scene is seen at least once. This depends heavily on the focal point of the camera: the bigger the focal point, the least area it captures and more waypoints are required.
-                    
-\end{itemize}
-
-\subsection{Default Parameters}
-\label{section:acquisition-default-parameters}
+Last, the waypoints' angle increment has to be enough so that part of the previous image appear in the next image, so that every observable part of the scene is seen at least once. This depends heavily on the focal point of the camera: the bigger the focal point, the least area it captures and more waypoints are required.
 
 \subsection{Acquisition node}
 \label{section:acquisition-node}
@@ -38,7 +31,7 @@ To implement this functionality, a ROS node was developed according to the previ
 
 Now, data from this topics need to be saved permanently, so this was done using a ROS tool called \emph{rosbag}, that saves all the data from a predefined set of topics into a binary file called a \emph{bag} file. This was a easy and powerful solution, because it allows the acquisition to be reproduced again, by republishing all the messages back into the system. To save a set of topics, a node called \emph{record} from the \emph{rosbag} package is run with the list of topics that required to be recorded into disk. In this case, the required topics are all the topics inside the \emph{/acquisition} namespace.
 
-To streamline the acquisition process, all this components (the acquisition node, the topic republisher nodes and the rosbag record node) can be all launched through a \emph{launch file}. A set of all the parameters required for each acquisition can be override over the default parameters shown in \cref{section:acquisition-default-parameters}. Therefore, running an acquisition just requires a single command:
+To streamline the acquisition process, all this components (the acquisition node, the topic republisher nodes and the rosbag record node) can be all launched through a \emph{launch file}. A set of all the parameters required for each acquisition can be override over the default parameters. Therefore, running an acquisition just requires a single command:
 
 \begin{verbatim}
 roslaunch lemonbot_acquisition single_acquisition.launch \
@@ -52,7 +45,7 @@ To have a better insight in the bag file, a tool called \emph{rosbag info} can b
 
 \begin{figure}
     
-    \begin{Verbatim}[frame=single]
+    \begin{Verbatim}[frame=single, fontsize=\small]
 path:        acquisition_2018-09-07-16-01-46.bag
 version:     2.0
 duration:    4:53s (293s)
@@ -84,7 +77,7 @@ To solve this issues, a preprocessing of the bag files was performed, to convert
 
 \begin{figure}
     
-    \begin{Verbatim}[frame=single]
+    \begin{Verbatim}[frame=single, fontsize=\small]
 {
     "ranges" : [ ... ],
     "limits" : {
@@ -109,7 +102,7 @@ To solve this issues, a preprocessing of the bag files was performed, to convert
 
 \begin{figure}
 
-    \begin{Verbatim}[frame=single]
+    \begin{Verbatim}[frame=single, fontsize=\small]
 bag: acquisition_2018-09-05-20-02-46.bag
 camera:
     extrinsic:
