@@ -1,16 +1,20 @@
 \section{Color Fusion}
 \label{section:color-fusion}
 
-In an capture with $N_a$ acquisitions, each one with $N_i$ images, the total number of images account to $N_a \times N_i$. Each one of this images will yield a partial colorized point cloud, according to \cref{section:color-registration}, and now the point clouds need to be merged into a final point cloud. More specifically, each point $p_i$ has multiple correspondent colors, one for each registered image. The method here described determines the final color in a point-wise fashion and does not account for the neighbor points.
+In an capture with $N_a$ acquisitions, each one with $N_i$ images, the total number of images account to $N_a \times N_i$. Each one of this images will yield a partial colorized point cloud, according to \cref{section:color-registration}, and the point clouds need to be merged into a final point cloud. More specifically, each point $p_i$ has multiple correspondent colors, one for each registered image. The method here described determines the final color in a point-wise fashion and does not account for the neighbor points.
 
-Let us admit that the point $p$ has a set $C = \{c_i|i=1\dots k\}$ of $k$ registered colors. The final color of this point $c$ should be a combination of the colors in $C$. The first and easier approach is to average the colors to obtain the color $c$, as seen in \cref{eqn:color-mean}. However, this is a poor heuristic as it considers that all colors have the same error, which is not true. For example, an image taken closer to an object is more precise than one taken away from it. 
+Let us admit that the point $p$ has a set $C = \{c_i|i=1\dots k\}$ of $k$ registered colors. The final color of this point $c$ should be a combination of the colors in $C$. 
+
+The first approach is to colorize the point with one image only, for example, the first or last image. This method is the easiest and the faster, but does not consider the other images for the colorization. 
+
+The second approach is to average the colors to obtain the color $c$, as seen in \cref{eqn:color-mean}. However, this is a poor heuristic as it considers that all colors have the same error, which is not true. For example, an image taken closer to an object is more precise than one taken away from it. 
 
 \begin{equation}
     \label{eqn:color-mean}
     c = \frac{1}{k} \sum_{i}^{k}{c_i}
 \end{equation}
 
-A common solution for this mean limitation is to use an weighted mean, shown in \cref{eqn:weighted-mean}. The $w_i$ are the weights for each color and should reflect the quality of each color, because colors with bigger weight have a bigger influence in the final color.
+A common solution for the mean limitation is to use an weighted mean, shown in \cref{eqn:weighted-mean}. The $w_i$ are the weights for each color and should reflect the quality of each color, because colors with bigger weight have a bigger influence in the final color.
 
 \begin{equation}
     \label{eqn:weighted-mean}

@@ -245,9 +245,9 @@ Based on the frustum of the camera defined above, the points that do not respect
 
 \subsubsection{Hidden Point Removal Filter}
 
-Not all points that lie on the frustum of the camera are seen by the camera, because some of this points are occluded by nearer objects, so they need to be removed.
+Not all points that lie on the frustum of the camera are seen by the camera, because some of this points are occluded by nearer objects, so they need to be removed. A fast and straightforward solution is to use the point cloud resulting from the same acquisition as the image, because the sensor are considered close together. However, this is not the best solution, as it would be better if the whole point cloud was used.
 
-In \cite{katz07}, an simple and fast operator, the Hidden Point Remove, or HPR, determines the visibility of point sets, viewed from a given viewport. This method is easily implemented and has a asymptotic complexity of $O(n \log n)$, where $n$ is the number of points in the point cloud. Moreover, this method work well for both sparse and dense point clouds.
+In \cite{katz07}, an simple and fast operator, the Hidden Point Removal, or HPR, determines the visibility of point sets, viewed from a given viewport. This method is easily implemented and has a asymptotic complexity of $O(n \log n)$, where $n$ is the number of points in the point cloud. Moreover, this method work well for both sparse and dense point clouds.
 
 The HPR operator operates on a set of points $\mathcal{P} = \{p_i | i = 1 \dots n \}$, and the goal is to determine whether $p_i$ is visible from a viewpoint $\mathcal{C}$. In this application, $C$ is the origin of the point cloud. The algorithm consists of two steps: the inversion and the convex hull construction.
 
