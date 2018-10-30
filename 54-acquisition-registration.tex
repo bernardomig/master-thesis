@@ -1,11 +1,11 @@
 \section{Acquisition Registration}
 \label{section:acquisition-registration}
 
-During an acquisition, multiple acquisitions are done and to each one corresponds a transformation (position and orientation) to the scene referencial. In this section, a method is described to find each one of this transformations, so all the acquisitions are merged into a single point cloud. The method chosen is the Iterative Closest Point, or ICP. This method is capable of aligning two point clouds, the reference and the target point cloud, by finding the transformation between the second to the first one. This is also known as point cloud registration.
+During a capture, multiple acquisitions are done and to each one corresponds a transformation (position and orientation) to the scene referencial. In this section, a method is described to find each one of this transformations, so all the acquisitions are merged into a single point cloud. The method chosen is the Iterative Closest Point, or ICP. This method is capable of aligning two point clouds, the reference and the target point cloud, by finding the transformation between the second to the first one. This is also known as point cloud registration.
 
 \subsection{Iterative Closest Point}
 
-\newcommand{\T}{\mathcal{T}}
+\newcommand{\T}{\mathrm{T}}
 \newcommand{\Pt}{\mathcal{P}}
 \newcommand{\Q}{\mathcal{Q}}
 
@@ -13,7 +13,7 @@ This method can formally be described as follows: let $\Pt$ be the target point 
 
 \begin{equation}
 \label{eqn:icp-transformation-function}
-    \mathcal{T} = \underset{\T}{\textrm{argmin}}(\mathrm{error}(\T(\Pt), \Q))
+    \T = \underset{\T}{\textrm{argmin}}\left(\mathrm{error}(\T(\Pt), \Q)\right)
 \end{equation}
 
 The error function $error(P, Q)$ is computed on pair of points that are associated between the two point clouds. This association is, ideally, between points that are closest in position in both point clouds. Then, the distance between the matching points $(p_i, q_i)$ are used in the error function in \cref{eqn:icp-error-function}. The matching algorithm can be based on features or geometric properties, so a better matching can be found. In this work, a simple point-to-point matching was used. 
@@ -28,7 +28,7 @@ In order to make the error function more robust, outlier points can be removed f
 However, the result of this minimization is always dependant on the association between the points, which, unless the descriptors are good enough (like visual correspondences), the matching is not perfect, and is worst the farther apart both point clouds are. The idea behind the ICP algorithm is that, even with a bag association, the resulting estimate can be used to find a better one. So, the ICP algorithm creates a series of transformation $\T_i$ at each iteration, yielding a new transformed point cloud $\Pt_i$. Then, the next transformation is found:
 
 \begin{equation}
-    \T_{i+1} = \underset{T}{\textrm{argmin}}(\textrm{error}(\T_i(\Pt_i), \Q))
+    \T_{i+1} = \underset{T}{\textrm{argmin}}\left(\textrm{error}(\T_i(\Pt_i), \Q)\right)
 \end{equation}
 
 Finally, the final transformation estimate is the composition of all the intermediary transformations:
@@ -40,30 +40,30 @@ Finally, the final transformation estimate is the composition of all the interme
 \subsection{Multiple Point Cloud ICP}
 \label{section:multiple-pointcloud-icp}
 
-ICP can only register pairs of point clouds, whereas this work requires a registration of $N$ point clouds, corresponding to $n$ acquisitions. So, a technique has to be found so that the ICP algorithm can be used with $n$ point clouds. Three of this such techniques are now describes, ordered by their complexity.
+ICP can only register pairs of point clouds, whereas this work requires a registration of $N$ point clouds, corresponding to $n$ acquisitions. So, a technique has to be found so that the ICP algorithm can be used with $n$ point clouds. Three of this such techniques are now described, ordered by their complexity.
 
-The first approach and the easier one to implement is to register each point clouds sequencially. In other words, this method registers the point cloud $\Pt_i$ to the point cloud $\Pt_{i-1}$ and the transformation $\T_{i-1}^{i}$ is found. The final accumulated point cloud is assembled using the \cref{eqn:registration-simple-method-calculation}. This method is the one that requires less overall registration, but has the disadvantage that the transformation errors increases for each successive point cloud. This approach is shown in \cref{figure:multiple-icp-method-1}.
+The first approach and the easier one to implement is to register each point clouds sequencially. In other words, this method registers the point cloud $\Pt_i$ to the point cloud $\Pt_{i-1}$ and the transformation $\T_{i-1}^{i}$ is found. The final accumulated point cloud is assembled using the \cref{eqn:registration-simple-method-calculation}. This method is the one that requires less overall registration, but has the disadvantage that the transformation errors increases for each successive point cloud. This approach is shown in \cref{figure:registration-methods-approaches}.
 
 \begin{equation}
 \label{eqn:registration-simple-method-calculation}
     \Pt = \bigcup{\left(\T_1^2 \circ \T_2^3 \circ \dots \circ \T_{i-1}^i\right)(\Pt_i)}
 \end{equation}
 
-The next approach is widely used in robotics for Simultaneous Location and Mapping , or SLAM. This method holds an accumulated point cloud $A$ in memory, and each new incoming point cloud $\Pt$ registers to the accumulated point cloud.  Afterwards it is merged into $A$, which is then used for the next iteration, as shown in \cref{figure:multiple-icp-method-2}. It has the advantage that each new registration is done against a wider point cloud and has a smaller influence than in the previous method. Also, at each iteration the current pose of the 3D scanner is obtained, which is used as an initial estimate for the next iteration. However, the accumulated point cloud grows at each iteration, so a down-sampling is done at each iteration to keep the number of points bounded. In conclusion, each iteration can be calculated by \cref{eqn:icp-compose-1,eqn:icp-compose-2}.
+The next approach is widely used in robotics for Simultaneous Location and Mapping , or SLAM. This method holds an accumulated point cloud $A$ in memory, and each new incoming point cloud $\Pt$ registers to the accumulated point cloud.  Afterwards it is merged into $A$, which is then used for the next iteration, as shown in \cref{figure:registration-methods-approaches}. It has the advantage that each new registration is done against a wider point cloud and has a smaller influence than in the previous method. Also, at each iteration the current pose of the 3D scanner is obtained, which is used as an initial estimate for the next iteration. However, the accumulated point cloud grows at each iteration, so a down-sampling is done at each iteration to keep the number of points bounded. In conclusion, each iteration can be calculated as:
 
 \begin{align}
     \label{eqn:icp-compose-1}
-    \T_{i} = & \textrm{ICP}(A, \Pt_{i}, \T_0 = \T_{i-1}) \\
+    \T_{i} = & \textrm{ICP}(A, \Pt_{i}, \T_0 = \T_{i-1}), \\
     \label{eqn:icp-compose-2}
-    A_{i+1} = & A{i} \bigcup \T_{i}(\Pt_i)
+    A_{i+1} = & A{i} \bigcup \T_{i}(\Pt_i).
 \end{align}
 
-The last approach is the most complex. The idea of this approach is to minimize the number of transformation combinations, to minimize the propagation of the error. In particular, the registrations for the $N$ points clouds are done pairwise and are merged together to create $N/2$ point clouds. Then, this process is done recursively until an unique point cloud is obtained. This way, the maximum number of transformation combinations are equal to the number of levels of the tree, which is $\log_2(N)$, instead of $N$ combinations in the first approach. This algorithm is formalized in \cref{eqn:registration-tree-method-1,eqn:registration-tree-method-2}, for a list of point clouds $S=\left\{P_1, P_2, \ \dots, \ P_n\right\}$. At each level $l$ a new list of point clouds $^{l}P$ and transformations $^{l}T$ are computed, as shown in \cref{figure:multiple-icp-method-3}.
+The last approach is the most complex. The idea of this approach is to minimize the number of transformation combinations, to minimize the propagation of the error. In particular, the registrations for the $N$ points clouds are done pairwise and are merged together to create $N/2$ point clouds. Then, this process is done recursively until an unique point cloud is obtained. This way, the maximum number of transformation combinations are equal to the number of levels of the tree, which is $\log_2(N)$, instead of $N$ combinations in the first approach. This algorithm is formalized in \cref{eqn:registration-tree-method-1,eqn:registration-tree-method-2}, for a list of point clouds $S=\left\{P_1, P_2, \ \dots, \ P_n\right\}$. At each level $l$ a new list of point clouds $^{l}P$ and transformations $^{l}T$ are computed, as shown in \cref{figure:registration-methods-approaches}:
 
 \begin{align}
-    ^{l}\T = & \left\{\textrm{ICP}(^{l-1}\Pt_1, ^{l-1}\Pt_2), \ \dots, \ \textrm{ICP}(^{l-1}\Pt_{n-1}, ^{l-1}\Pt_{n}) \right\}
+    ^{l}\T = & \left\{\textrm{ICP}(^{l-1}\Pt_1, ^{l-1}\Pt_2), \ \dots, \ \textrm{ICP}(^{l-1}\Pt_{n-1}, ^{l-1}\Pt_{n}) \right\},
         \label{eqn:registration-tree-method-1} \\
-    ^{l}\Pt = & \left\{^{l-1}\Pt_1 \bigcup{^{l}\T_1(^{l-1}\Pt_2}), \ \dots, \ ^{l-1}\Pt_{n-1} \bigcup{^{l}\T_{n/2}(^{l-1}\Pt_n)}\right\}
+    ^{l}\Pt = & \left\{^{l-1}\Pt_1 \bigcup{^{l}\T_1(^{l-1}\Pt_2}), \ \dots, \ ^{l-1}\Pt_{n-1} \bigcup{^{l}\T_{n/2}(^{l-1}\Pt_n)}\right\}.
         \label{eqn:registration-tree-method-2}
 \end{align}
 

@@ -9,8 +9,8 @@
             \draw (0, 0) circle (0.08);
             \draw (-0.08, -0.08) rectangle (0.08, 0.08);
             
-            \draw[-stealth] (0,0) -- (0, 0.40) node[anchor=east, scale=0.5] {$x$};
-            \draw[-stealth] (0,0) -- (-0.40, 0) node[anchor=east, scale=0.5] {$y$};
+            \draw[-stealth] (0,0) -- (0, 0.40) node[anchor=east, scale=0.6] {$x$};
+            \draw[-stealth] (0,0) -- (-0.40, 0) node[anchor=east, scale=0.6] {$y$};
         }
     }
 
@@ -22,14 +22,14 @@
     
             \coordinate (camera) at (1,1);
     
-            \node[scale=0.5, anchor=north west] at (camera) {camera};
+            \node[scale=0.6, anchor=north west] at (camera) {camera};
     
             \draw (2, 2) rectangle +(1,1);
     
-            \node[scale=0.5] at (2.5,2.5) {object}; 
+            \node[scale=0.6] at (2.5,2.5) {object}; 
     
             \draw (camera) pic[rotate=-45] {camera};
-            \draw[-stealth, rotate=-45, very thin] (camera) -- +(0, 0.6) node[scale=0.5, anchor=south west] {$z$};
+            \draw[-stealth, rotate=-45, very thin] (camera) -- +(0, 0.6) node[scale=0.6, anchor=south west] {$z$};
     
             \draw[very thin, dashed] (camera) -- (1.6, 4);
             \draw[very thin, dashed] (camera) -- (4, 1.6);
@@ -52,7 +52,7 @@
 
             \draw (laser) pic {laser};
 
-            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+            \node[anchor=west, scale=0.6, xshift=5] at (laser) {l.s.};
 
             \draw[very thin, dashed] (laser) -- (0,0.2);
             \draw[very thin, dashed] (laser) -- (2.2, 0);
@@ -62,7 +62,7 @@
 
             \draw (2.5,0.5) rectangle (2.8,2);
 
-            \node[scale=0.5, rotate=90] at (2.65, 1.21) {wall};
+            \node[scale=0.6, rotate=90] at (2.65, 1.21) {wall};
 
             \pattern[pattern=north east lines] (4,0) -- (4,3) -- (2.5, 2) -- (2.8,2) -- (2.8, 0.5)
                 -- (2.5, 0.5) -- cycle;
@@ -78,12 +78,12 @@
 
             \coordinate (camera) at (1,2);
             \draw (camera) pic[rotate=-90] {camera};
-            \draw[-stealth, very thin] (camera) -- +(0.6, 0) node[scale=0.5, anchor=south west] {$z$};
+            \draw[-stealth, very thin] (camera) -- +(0.6, 0) node[scale=0.6, anchor=west] {$z$};
 
             \foreach \a/\c in {1/0.8,2/1.4,3/2} {
                 \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 + \c);
                 \draw[very thin, dashed, dash pattern=on 2*\a off 2*\a] (camera) -- (4, 2 - \c)
-                    node[pos=0.8, above, scale=0.4] {$f_{\a}$};
+                    node[pos=0.8, above, scale=0.6] {$f_{\a}$};
             };
 
         \end{tikzpicture}
@@ -98,7 +98,7 @@
             \clip (0,0) rectangle (4,4);
 
             \foreach \a/\c in {180/0, 225/1, 270/2} {
-                \draw[very thin, dashed] (0, 1.5-\c) -- (2,1.5) node[pos=0.4, scale=0.4, sloped, anchor=south] {$r = \SI{\a}{\degree}$} -- (4, 1.5-\c);
+                \draw[very thin, dashed] (0, 1.5-\c) -- (2,1.5) node[pos=0.4, scale=0.6, sloped, anchor=south] {$r = \SI{\a}{\degree}$} -- (4, 1.5-\c);
             };
 
             \draw[ultra thin, dashdotted] (2, 1.5) -- +(0, 3);
@@ -118,7 +118,7 @@
             
             \coordinate (laser) at (1,1);
             \draw (laser) pic {laser};
-            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+            \node[anchor=west, scale=0.6, xshift=5] at (laser) {l.s.};
 
             \draw[thin, dashed] (laser) -- (0,0);
             \draw[thin, dashed] (laser) -- (2, 0);
@@ -133,8 +133,8 @@
                 \draw[thin, dashed, dash pattern=on 5pt off 5pt] (laser) circle (2.5);                
             \end{scope}
 
-            \node[scale=0.5, anchor=east] at (2.8, 1) {$r_1$};
-            \node[scale=0.5, anchor=east] at (3.5, 1) {$r_2$};
+            \node[scale=0.6, anchor=east] at (2.8, 1) {$r_1$};
+            \node[scale=0.6, anchor=east] at (3.5, 1) {$r_2$};
 
         \end{tikzpicture}
 
@@ -148,7 +148,7 @@
 
             \coordinate (laser) at (1,1);
             \draw (laser) pic {laser};
-            \node[anchor=west, scale=0.5, xshift=5] at (laser) {l.s.};
+            \node[anchor=west, scale=0.6, xshift=5] at (laser) {l.s.};
 
 
             \foreach \a in {0, 5, ..., 180} {
@@ -158,10 +158,10 @@
             };
 
             \draw[fill=white, draw=black] (1, 3) rectangle ++(0.7,0.7)
-                node[midway, scale=0.5] {obj. 1};
+                node[midway, scale=0.6] {obj. 1};
 
             \draw[fill=white, draw=black] (2, 1.5) rectangle ++(0.7, 0.7)
-                node[midway, scale=0.5] {obj. 2};
+                node[midway, scale=0.6] {obj. 2};
 
         \end{tikzpicture}
 

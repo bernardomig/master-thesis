@@ -31,18 +31,13 @@ The solution were presented acknowledges that each point in the point cloud resu
 
 Then, for each point, the tangent plane that fits the neighborhood is calculated, which in turn is a least-square plane fitting problem. This is usually solved by an analysis of the eigenvalues and eigenvalues of the covariance matrix of the neighborhood points. This method is also known as the Principal Component Analysis.
 
-To start with, for any neighborhood, the covariance matrix $\mathcal{C}$ is assembled as in \cref{eqn:normal-covariance-matrix}, where $n$ is the number of points in the neighborhood and $\bar{p}$ is the centroid of the points ($\otimes$ is the  tensor product). Then, an eigen-decomposition is performed in the covariance matrix to calculate the eigenvalues $\lambda_i$ and the corresponding eigenvectors $\texttt{v}_i$. Finally, the direction of the normal vector of the point is the eigen vector corresponding to the smallest eigenvalue, so $\hat{n} = \pm \texttt{v}_3$.
-
-\begin{equation}
-\label{eqn:normal-covariance-matrix}
-    \mathcal{C} = \frac{1}{n} \sum_{i}^{n}{(p_i - \bar{p}) \otimes (p_i - \bar{p})}
-\end{equation}
+To start with, for any neighborhood, the covariance matrix $\mathcal{C}$ is assembled as in \cref{eqn:covariance-matrix}, where $n$ is the number of points in the neighborhood and $\bar{p}$ is the centroid of these points. As before, an eigen-decomposition is performed in the covariance matrix to calculate the eigenvalues $\lambda_1, \lambda_2, \lambda_3$ and the corresponding eigenvectors $\texttt{v}_1, \texttt{v}_3, \texttt{v}_3$. Finally, the direction of the normal vector $n$ of the point is the eigen vector corresponding to the smallest eigenvalue, so $n = \pm \texttt{v}_3$.
 
 Then, the orientation of the point has to be defined, because the result of the PCA is ambiguous, which may lead to inconsistent normals in the point cloud. In this case, the solution found was to orientate the normals towards the frame of the 3D scanner, which for each acquisition if the zero position.     Therefore, each normal has to satisfy the \cref{eqn:normal-orientation}.
 
 \begin{equation}
 \label{eqn:normal-orientation}
-    \hat{n} \cdot p < 0
+    n \cdot p < 0
 \end{equation}
 
 Further, there should be some filtering, specially for points at an edge, because the neighborhoods method described here is going to fail in this case. So, a proposed solution is to reject any point that exceeds a certain threshold distance to the center point. This has the advantage that the normal estimation can still work in the edges.

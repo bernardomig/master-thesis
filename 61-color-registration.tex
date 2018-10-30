@@ -92,7 +92,7 @@ To start, each point has to be transformed, because the original point is regist
     \label{fig:color-registration-3d}
 \end{figure}
 
-Next, each point was transformed into pixel coordinates $(u, v)$, using the pinhole camera model. This model defined how a light ray in projected in the image sensor of a camera and has two parameters: the focal length $f = (f_x, f_y)$ and optical center $(c = (c_x, c_y))$. This parameters are obtained in the intrinsic calibration of the camera (\cref{section:camera-intrinsic-calibration}). According to this model, each point is projected as pixel coordinates $(u, v)$ to a plane located a unit distance from the camera eye point, using the perspective projection matrix in \cref{eqn:perspective-matrix}, according to \cref{eqn:perpective-transformation}. 
+Next, each point was transformed into pixel coordinates $(u, v)$, using the pinhole camera model. This model defined how a light ray in projected in the image sensor of a camera and has two parameters: the focal length $f = (f_x, f_y)$ and optical center $(c = (c_x, c_y))$. This parameters are obtained in the intrinsic calibration of the camera (\cref{section:camera-intrinsic-calibration}). According to this model, each point is projected as pixel coordinates $(u, v)$ to a plane located a unit distance from the camera eye point, using the perspective projection matrix in \cref{eqn:perspective-matrix}, according to:
 
 \begin{equation}
     \label{eqn:perspective-matrix}
@@ -103,7 +103,7 @@ Next, each point was transformed into pixel coordinates $(u, v)$, using the pinh
             0   & f_y & c_y \\
             0   & 0   & 1   \\
         \end{array}    
-    \right]
+    \right],
 \end{equation}
 
 \begin{equation}
@@ -119,7 +119,7 @@ Next, each point was transformed into pixel coordinates $(u, v)$, using the pinh
         \begin{array}{c}
             x \\ y \\ z \\
         \end{array}    
-    \right)
+    \right).
 \end{equation}
 
 \subsection{Camera Distortion}
@@ -139,7 +139,7 @@ The pinhole camera model does not regard the distortion caused by the lens, whic
         \begin{array}{c}
             u \\ v \\
         \end{array}
-    \right)
+    \right).
     \\
     \label{eqn:tangential-distortion}
     \left(
@@ -159,7 +159,7 @@ The pinhole camera model does not regard the distortion caused by the lens, whic
             2 p_1 u v + p_2 (r^2 + 2u^2) \\
             p_2 (r^2 + 2v^2) + 2 p_2 u v \\
         \end{array}
-    \right)
+    \right).
 \end{align}
 
 \begin{figure}[h]
@@ -167,7 +167,7 @@ The pinhole camera model does not regard the distortion caused by the lens, whic
     \centering
     \includegraphics[width=0.65\textwidth]{fisheye}
 
-    \caption{Barrel distortion in fish eye lens}
+    \caption{Barrel distortion in fish eye lens.}
     \label{fig:fisheye}
 
 \end{figure}
@@ -245,20 +245,20 @@ Based on the frustum of the camera defined above, the points that do not respect
 
 \subsubsection{Hidden Point Removal Filter}
 
-Not all points that lie on the frustum of the camera are seen by the camera, because some of this points are occluded by nearer objects, so they need to be removed. A fast and straightforward solution is to use the point cloud resulting from the same acquisition as the image, because the sensor are considered close together. However, this is not the best solution, as it would be better if the whole point cloud was used.
+Not all points that lie on the frustum of the camera are seen by the camera, because some of this points are occluded by nearer objects, so they need to be removed. A fast and straightforward solution is to use the point cloud resulting from the same acquisition as the image, because the sensor are considered close together. However, this is not the best solution, as it would be better if the point cloud obtained after the acquisition registration was used.
 
-In \cite{katz07}, an simple and fast operator, the Hidden Point Removal, or HPR, determines the visibility of point sets, viewed from a given viewport. This method is easily implemented and has a asymptotic complexity of $O(n \log n)$, where $n$ is the number of points in the point cloud. Moreover, this method work well for both sparse and dense point clouds.
+In \cite{katz07}, an simple and fast operator, the Hidden Point Removal, or HPR, determines the visibility of point sets, viewed from a given viewport. This method is easily implemented and has a asymptotic complexity of $O(n \log n)$, where $n$ is the number of points in the point cloud. Moreover, this method works well for both sparse and dense point clouds.
 
-The HPR operator operates on a set of points $\mathcal{P} = \{p_i | i = 1 \dots n \}$, and the goal is to determine whether $p_i$ is visible from a viewpoint $\mathcal{C}$. In this application, $C$ is the origin of the point cloud. The algorithm consists of two steps: the inversion and the convex hull construction.
+The HPR operator operates on a set of points $\mathcal{P} = \{p_i | i = 1 \dots n \}$, and the goal is to determine whether $p_i$ is visible from a viewpoint $\mathcal{C}$. In this application, $C$ is the origin of the point cloud. The algorithm consists of two steps: the inversion and the construction of the convex hull.
 
-The inversion step maps each point $p_i$ along the ray from $\mathcal{C}$ to $p_i$, such that $|p_i|$ is monotonically decreasing. There are multiple ways to perform the inversion, but in \cite{katz07} the \emph{spherical flipping} was used. Spherical flipping reflects a point $p_i$ with respect to a sphere of radius $R$ to the new point $\hat{p_i}$ by applying the \cref{eqn:spherical-flipping}.
+The inversion step maps each point $p_i$ along the ray from $\mathcal{C}$ to $p_i$, such that $|p_i|$ is monotonically decreasing. There are multiple ways to perform the inversion, but in \cite{katz07} the \emph{spherical flipping} was used. Spherical flipping reflects a point $p_i$ with respect to a sphere of radius $R$ to the new point $\hat{p_i}$ by applying:
 
 \begin{equation}
     \label{eqn:spherical-flipping}
-    \hat{p_i} = p_i + 2 (R - |p_i|) \frac{p_i}{|p_i|}
+    \hat{p_i} = p_i + 2 (R - |p_i|) \frac{p_i}{|p_i|}.
 \end{equation}
 
-Afterwards, the convex hull of $\hat{\mathcal{P}} \bigcup \{\mathcal{C}\}$, where $\hat{\mathcal{P}}$ is the transformed point set and $\mathcal{C}$ is the center of the sphere, is computed. Finally, the points that lie in the complex hull are the visible points of the point set.
+Afterwards, the convex hull of $\hat{\mathcal{P}} \bigcup \{\mathcal{C}\}$, where $\hat{\mathcal{P}}$ is the transformed point set and $\mathcal{C}$ is the center of the sphere, is computed. Finally, the points that lie in the convex hull are the visible points of the point set.
 
 This algorithm only has a parameter, which is the radius $R$ of the sphere used for the spherical flipping, which influences the amount of false positives of the algorithm. In general, $R$ is determined based on the maximum point length $max(|p_i|)$ and a exponential factor $\alpha$, such that $R = max(|p_i|) \times 10^{\alpha}$. In this application, a factor of $\alpha = 3$ was adequate.
 

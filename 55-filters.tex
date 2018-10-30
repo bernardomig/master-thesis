@@ -5,7 +5,11 @@ The final point cloud, after the assembly from every acquisition's point cloud, 
 
 \subsection{NaN Removal}
 
-The first filter is the Not a Number removal, or NaN removal. In the acquisition, any range that is not measured is stored as a NaN, to signal that they are missing. During the point registration phase, all this missing ranges remain as NaN, and should be removed, because their information is irrelevant and take as much space as a real value. So, each point that contains a NaN value is removed from the final point cloud.
+The first filter is the Not a Number removal, or NaN removal. In the first steps of the reconstruction, the point cloud is stored as a dense point cloud, or structured point cloud. To maintain this structure, NaNs are used to mark the missing values, which are usually originated by measurement errors. When the structure of the point cloud becomes irrelevant, its dimensions are collapsed into one. After, the NaNs become irrelevant and are removed from the point cloud.
+
+
+
+In the acquisition, any range that is not measured is stored as a NaN, to signal that they are missing. During the point registration phase, all this missing ranges remain as NaN, and should be removed, because their information is irrelevant and take as much space as a real value. So, each point that contains a NaN value is removed from the final point cloud.
 
 \subsection{Statistic Outlier Removal}
 
@@ -28,7 +32,7 @@ Usually point clouds contains different point densities, dependent on the distan
         \label{figure:sor-filter-after}
     \end{subfigure}
 
-    \caption{SOR filter in a point cloud}
+    \caption{SOR filter in a point cloud, processed by the software \textit{CloudCompare}.}
     \label{figure:sor-filter}
 \end{figure}
 
@@ -58,6 +62,6 @@ This method downsamples, that is, reduce the number of points of a point cloud, 
         \label{figure:lucy-voxel-grid-8mm}
     \end{subfigure}
 
-    \caption{Stanford Lucy scan \cite{stanford-scanning-rep} after a voxel grid downsampling with different leaf sizes}
+    \caption{Stanford Lucy scan \cite{stanford-scanning-rep} after a voxel grid downsampling with different leaf sizes.}
     \label{figure:lucy-voxel-grid}
 \end{figure}

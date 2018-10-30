@@ -1,7 +1,7 @@
 \section{Color Fusion}
 \label{section:color-fusion}
 
-In an capture with $N_a$ acquisitions, each one with $N_i$ images, the total number of images account to $N_a \times N_i$. Each one of this images will yield a partial colorized point cloud, according to \cref{section:color-registration}, and the point clouds need to be merged into a final point cloud. More specifically, each point $p_i$ has multiple correspondent colors, one for each registered image. The method here described determines the final color in a point-wise fashion and does not account for the neighbor points.
+In a capture with $N_a$ acquisitions, each one with $N_i$ images, the total number of images account to $N_a \times N_i$. Each one of this images will yield a partial colorized point cloud, according to \cref{section:color-registration}, and the point clouds need to be merged into a final point cloud. More specifically, each point $p_i$ has multiple correspondent colors, one for each registered image. The method here described determines the final color in a point-wise fashion and does not account for the neighbor points.
 
 Let us admit that the point $p$ has a set $C = \{c_i|i=1\dots k\}$ of $k$ registered colors. The final color of this point $c$ should be a combination of the colors in $C$. 
 

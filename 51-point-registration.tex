@@ -4,21 +4,21 @@
 Each laser scan is a collection of points in polar coordinates, so each range point $(r_i, \theta_i)$ is transformed to a point in the laser frame of reference according to \cref{eqn:range-to-point}. The angles are uniform distributed between a minimum and maximum angle, $\theta_{min}$ and $\theta_{max}$, respectively, so $\theta_i = \{\theta_{min}, \ \dots, \ \theta_{max}\}, i=1 \dots N$. The index $i$ is defined as the range index of each laser scan.
 
 \begin{equation}\label{eqn:range-to-point}
-    \left(
+    \left[
         \begin{array}{c}
             x_i \\
             y_i \\
             z_i \\
         \end{array}
-    \right)
+    \right]
     =
-    \left(
+    \left[
         \begin{array}{c}
             r_i \cos(\theta_i) \\
             r_i \sin(\theta_i) \\
             0 \\
         \end{array}    
-    \right)
+    \right]
 \end{equation}
 
 Further on, each point $p_{ij}$ is registered in the referencial of the acquisition. According to the transformation graph (see \cref{figure:geometric-transformation-graph}), there are two transformation from the acquisition frame and the laser scanner frame: the transform from the acquisition frame to the PTU frame $\TF{acq}{ptu}$, which is dynamic and changes for each laser scan, and the transformation from the PTU frame and the laser scanner frame $\TF{ptu}{laser}$, which is static. This two transformations can be chained together to obtain the point in the acquisition frame, according to \cref{eqn:point-registration}.
@@ -47,27 +47,27 @@ Further on, each point $p_{ij}$ is registered in the referencial of the acquisit
 
 \begin{equation}\label{eqn:point-registration}
     p_{i,j} = 
-    \left(
+    \left[
         \begin{array}{c}
             x_{i,j} \\ y_{i,j} \\ z_{i,j} \\ 1 \\
         \end{array}    
-    \right)
+    \right]
     =
     \TF{acq}{ptu}
     \cdot \TF{ptu}{laser}
     \cdot
-    \left(
+    \left[
         \begin{array}{c}
             r_i \cos(\theta_i) \\
             r_i \sin(\theta_i) \\
             0 \\
             1 \\
         \end{array}    
-    \right)
+    \right]
 \end{equation}
 
 At this phase, each point has 2 indexes, one for the laser scan index $j=1\dots L$ and another for the range index $i=1\dots N$, relative to the each laser scan. Despite that point clouds commonly only use one index, at this stage the points are structured in a bidimensional structure of $L \times N$ points. This structure is useful in the normal estimation phase, explained in \cref{section:normal-estimation}.
 
-This reconstruction phase depends heavily on the transformation from the PTU to the laser scanner. This transformation is obtained by a calibration process and is commonly referred as the extrinsic calibration of the laser scanner. The calibration method used to obtain this extrinsic calibration is explained in detain in \cref{section:laser-extrinsic-calibration}.
+This reconstruction phase depends heavily on the transformation from the PTU to the laser scanner. This transformation is obtained by a calibration process and is commonly referred to as the extrinsic calibration of the laser scanner. The calibration method used to obtain this extrinsic calibration is explained in detain in \cref{section:laser-extrinsic-calibration}.
 
-In conclusion, for each acquisition results a point cloud with $L \times N$ points, where $L$ are the number of laser scans and $N$ the number of range values in each laser scan. Each point can be indexes in a bidimensional index, which can be useful for subsequent algorithms.
+In conclusion, for each acquisition results a point cloud with $L \times N$ points, where $L$ are the number of laser scans and $N$ the number of range values in each laser scan. Each point can be indexed in a bidimensional space, which can be useful for subsequent algorithms.
