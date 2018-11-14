@@ -9,13 +9,13 @@
     
     
         \centering
-        \begin{tikzpicture}
+        \begin{tikzpicture}[scale=0.9]
             
             \node[ros_level] (ROS) {ROS};
             \coordinate[below=0.4cm of ROS] (aux_node1);
             \node[level, below=0.6cm of aux_node1] (computational_graph) {Computational Graph};
-            \node[level, left=2cm of computational_graph] (filesystem) {Filesystem};
-            \node[level, right=of computational_graph] (community) {Community};
+            \node[level, left=1.7cm of computational_graph] (filesystem) {Filesystem};
+            \node[level, right=1cm of computational_graph] (community) {Community};
     
             \draw[->] (ROS) -- (aux_node1) -- (computational_graph.north);
             \draw[->] (ROS) -- (aux_node1) -| (filesystem.north);

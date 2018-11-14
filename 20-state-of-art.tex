@@ -34,7 +34,7 @@ The first major application of LiDAR technology was to map and reconstruct the t
 
 Moreover, airborne LiDAR is also used to detect and classify clouds, which is an important data in meteorology. This is possible by studying the rayleigh scattering effect, which occurs when a laser beam goes through a particles smaller that its wave length, as for example, the water molecules in clouds.  This is essential for modern forecast prediction.
 
-A airborne LiDAR scanner of the Austrian city Retz is shown in \cref{fig:riegl-lidar-scan}, which is available in \cite{potree-retz}, taken with a Riegl laser scanner placed in a Unmanned Aerial Vehicle. \cref{fig:riegl-lidar-scan-big} shows the entire scan with an area of \SI{1300 x 1300}{\meter}, \cref{fig:riegl-lidar-scan-small} shows a portion correspondent to the city, and \cref{fig:riegl-lidar-scan-tiny} shows the town hall, which has an area of about \SI{150 x 70}{\meter}. As can be seen, the result is a massive point cloud that covers a large area while still maintaining a high point density so small details are not smeared out. 
+A airborne LiDAR scanner of the Austrian city Retz is shown in \cref{fig:riegl-lidar-scan}\footnote{In \url{http://www.potree.org/potree/examples/showcase/retz.html}.}, taken with a Riegl laser scanner placed in a Unmanned Aerial Vehicle. \cref{fig:riegl-lidar-scan-big} shows the entire scan with an area of \SI{1300 x 1300}{\meter}, \cref{fig:riegl-lidar-scan-small} shows a portion correspondent to the city, and \cref{fig:riegl-lidar-scan-tiny} shows the town hall, which has an area of about \SI{150 x 70}{\meter}. As can be seen, the result is a massive point cloud that covers a large area while still maintaining a high point density so small details are not smeared out. 
 
 \begin{figure}[p]
     \centering
@@ -78,18 +78,19 @@ In recent years, LiDAR scanner became a fundamental technology for industrial an
 
 This laser scanners have a large number of applications. For example, 2D laser scanners are used in autonomous robots, to provide precise 2D mapping information of the environment, which can be user afterwards for location and navigation \cite{siritanawan17}. Compared to other technologies, like stereo vision, this one requires small processing power and yields accurate results, so their application is easy to implement and requires low processing power. 
 
-Another widely used application is intrusion detection. The 2D laser scanner can be spaced in a room or door to detect if any object enters to the space. For example, it is used to ensure the safety of workers in industrial environment, ensuring that workers do not get close to working machines. Other example is in theft prevention in museums and banks to secure specific areas against robbery or vandalism \cite{sick-security}.
+Another widely used application is intrusion detection. The 2D laser scanner can be spaced in a room or door to detect if any object enters to the space. For example, it is used to ensure the safety of workers in industrial environment, ensuring that workers do not get close to working machines. Other example is in theft prevention in museums and banks to secure specific areas against robbery or vandalism\footnote{In \url{https://www.sick.com/ag/en/industries/building-safety-and-security/c/g288283}.}.
 
-Recently, 3D laser scanners become available, but at a high price range. One example of these new sensors is the Velodyne, which is a 3D laser scanner capable of producing a 3D point cloud directly, unlike the 2D laser scanner. This is possible because they emit multiple laser beams, instead of just one. The laser beams are reflected using a rotating mirror, to get a continuous 3D scan. Moreover, 3D laser scanners are capable of producing a 3D scan at a higher rate than any solution employing a 2D laser scanner. In the case of Velodyne \emph{VLS-128}, shown in \cref{fig:velodyne-vls128}, the number of simultaneous laser beams are \num{128}, with a vertical Field of View of \SIrange{-25}{+15}{\degree} and up to \SI{300}{\meter} range\cite{velodyne-vls128}. This LiDAR laser is capable of a sampling rate of about 9.6 million points per second.
+Recently, 3D laser scanners become available, but at a high price range. One example of these new sensors is the Velodyne, which is a 3D laser scanner capable of producing a 3D point cloud directly, unlike the 2D laser scanner. This is possible because they emit multiple laser beams, instead of just one. The laser beams are reflected using a rotating mirror, to get a continuous 3D scan. Moreover, 3D laser scanners are capable of producing a 3D scan at a higher rate than any solution employing a 2D laser scanner. In the case of Velodyne \emph{VLS-128}, shown in \cref{fig:velodyne-vls128}, the number of simultaneous laser beams are \num{128}, with a vertical Field of View of \SIrange{-25}{+15}{\degree} and up to \SI{300}{\meter} range. This LiDAR laser is capable of a sampling rate of about 9.6 million points per second.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=8cm]{velodyne-vls128}
-    \caption{Velodyne VLS128 LiDAR laser scanner.}
+    \caption{
+        Velodyne VLS128 LiDAR laser scanner.}
     \label{fig:velodyne-vls128}
 \end{figure}
 
-3D laser scanners are a very new technology, and are mostly used for high research projects, mainly in autonomous vehicles, like the Google Autonomous car \cite{google-self-driving} or the Stanford Junior Vehicle\cite{montemerlo08}. This application benefits mostly from this scanners high sampling ranges and \SI{360}{\degree} horizontal field of view.
+3D laser scanners are a very new technology, and are mostly used for high research projects, mainly in autonomous vehicles, like the Google Autonomous car\footnote{In \url{https://www.google.com/selfdrivingcar/}.}  or the Stanford Junior Vehicle\cite{montemerlo08}. This application benefits mostly from this scanners high sampling ranges and \SI{360}{\degree} horizontal field of view.
 
 \begin{figure}[h]
     \centering
@@ -130,9 +131,9 @@ In this section two commercial solutions are shown and discussed. Both solution 
 
 \subsection{Matterport}
 
-\emph{Matterport} is advertized as an all-in-one solution, capable of both 3D reconstruction and capture 4K resolution images from the scene. Their target is mostly the reconstruction of indoor scenes, more specifically, the interior of houses. Then, the 3D model can be used to showcase the interior of the house, using both virtual reality or panoramic photography, or to make 3D measurements and automatically generate floor plans\cite{matterport}.
+\emph{Matterport} is advertized as an all-in-one solution, capable of both 3D reconstruction and capture 4K resolution images from the scene. Their target is mostly the reconstruction of indoor scenes, more specifically, the interior of houses. Then, the 3D model can be used to showcase the interior of the house, using both virtual reality or panoramic photography, or to make 3D measurements and automatically generate floor plans\footnote{In \url{https://matterport.com/}.}.
 
-\emph{Matterport} offers two products: a 3D camera and a cloud service to process the raw data taken with the camera. The camera, as seen in \cref{fig:matterport-camera}, consists of two sensors: a structured light sensor and a photographic camera\cite{matterport}. The structured light sensor has an advertized $99\%$ geometric accuracy within the \SI{4.5}{\meter} maximum range. The Photography sensor is a 4K HDR camera.
+\emph{Matterport} offers two products: a 3D camera and a cloud service to process the raw data taken with the camera. The camera, as seen in \cref{fig:matterport-camera}, consists of two sensors: a structured light sensor and a photographic camera\footnote{In \url{https://matterport.com/}.}. The structured light sensor has an advertized $99\%$ geometric accuracy within the \SI{4.5}{\meter} maximum range. The Photography sensor is a 4K HDR camera.
 
 \begin{figure}[h]
     
@@ -146,7 +147,7 @@ In this section two commercial solutions are shown and discussed. Both solution 
 
 The overall process to capture a scene is fast and easy: the 3D camera is placed on a tripod and is controlled remotely. Each acquisition takes about \SI{20}{\second} and the result is a 3D colorized mesh with 4 million vertices and a \SI{360}{\degree} panoramic photography with 134.2 MP. To scan an entire environment, an operator moves the camera to each space and make multiple new acquisitions from that space.
 
-A set of models reconstructed from the with the Matterport solution can be found in \cite{matterport-gallery}. As an example, the model named "Pennsylvania Craftsman Home" \cite{matterport-house} can be seen in \cref{fig:matterport-model}. This model represents the complete interior of an house and looks very realistic.
+A set of models reconstructed from the with the Matterport solution can be found in "Matterport 3D Space Gallery"\footnote{In \url{https://matterport.com/gallery}.}. As an example, the model named "Pennsylvania Craftsman Home"\footnote{In \url{https://matterport.com/3d-space/pennsylvania-craftsman-home/}.} can be seen in \cref{fig:matterport-model}. This model represents the complete interior of an house and looks very realistic.
 
 \begin{figure}[h]
     
@@ -163,13 +164,13 @@ A set of models reconstructed from the with the Matterport solution can be found
         \caption{Top view.}
     \end{subfigure}
 
-    \caption{Matterport "Pennsylvania Craftsman Home" model (from~\cite{faro-scan}).}
+    \caption{Matterport "Pennsylvania Craftsman Home" model.}
     \label{fig:matterport-model}
 \end{figure}
 
 \subsection{Faro Focus}
 
-Faro Focus \cite{faro-focus} are a series of 3D laser scanners targeted for the sectors of architecture, engineering, construction and product design. As such, this solution is capable of fast 3D reconstructions both on outside and inside environments with great accuracy. The 3D scanner, as seen in \cref{fig:faro-focus}, is design for portability and is equipped with a laser scanner with a precision of \SI{+-1}{\milli\meter} and a range of \SIrange{0.6}{350}{\meter}, and a 8 MP HDR camera.
+Faro Focus\footnote{In \url{https://www.faro.com/en-gb/products/construction-bim-cim/faro-focus/}.} are a series of 3D laser scanners targeted for the sectors of architecture, engineering, construction and product design. As such, this solution is capable of fast 3D reconstructions both on outside and inside environments with great accuracy. The 3D scanner, as seen in \cref{fig:faro-focus}, is design for portability and is equipped with a laser scanner with a precision of \SI{+-1}{\milli\meter} and a range of \SIrange{0.6}{350}{\meter}, and a 8 MP HDR camera.
 
 \begin{figure}[h]
     \centering
@@ -180,7 +181,7 @@ Faro Focus \cite{faro-focus} are a series of 3D laser scanners targeted for the 
 
 An acquisition, like in the \emph{Matterport Pro2 Camera}, is quick and easy, but does not require any remote computer, as the scanner incorporates a touch LCD screen. All the subsequent processing is done afterwards in a computer, using their proprietary software.
 
-Faro Focus scans are very precise, as they are used for precise measurements of the reconstructed scene. As an example, a scan obtained by the Faro Focus can be seen in \cref{fig:faro-scan}.
+Faro Focus scans are very precise, as they are used for precise measurements of the reconstructed scene. As an example, a scan obtained by the Faro Focus can be seen in \cref{fig:faro-scan}\footnote{In \url{https://streambend.net/laser-scanning/}.}.
 
 \begin{figure}[h]
     \centering
