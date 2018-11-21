@@ -1,19 +1,17 @@
 \section{Filters}
 \label{section:filters}
 
-The final point cloud, after the assembly from every acquisition's point cloud, can have unnecessary or redundant information, which can make the point cloud size too large for any use. A common solution is to use filters to remote unnecessary points and downsample the point cloud.
+The final point cloud, after the assembly from every acquisition's point cloud, can have unnecessary or redundant information, which can make the point cloud size very large. A common solution is to use filters to remote unnecessary points and downsample the point cloud.
 
-\subsection{NaN Removal}
+\subsection{Not a Number Removal}
 
 The first filter is the Not a Number removal, or NaN removal. In the first steps of the reconstruction, the point cloud is stored as a dense point cloud, or structured point cloud. To maintain this structure, NaNs are used to mark the missing values, which are usually originated by measurement errors. When the structure of the point cloud becomes irrelevant, its dimensions are collapsed into one. After, the NaNs become irrelevant and are removed from the point cloud.
-
-
 
 In the acquisition, any range that is not measured is stored as a NaN, to signal that they are missing. During the point registration phase, all this missing ranges remain as NaN, and should be removed, because their information is irrelevant and take as much space as a real value. So, each point that contains a NaN value is removed from the final point cloud.
 
 \subsection{Statistic Outlier Removal}
 
-Usually point clouds contains different point densities, dependent on the distance of the object to the sensor. Also, measurement errors also occur next to edges or corners. As a result, point clouds tend to have sparse outliers that can affect subsequent algorithms, like segmentation or registration algorithms. A usual solution is to perform an statistically analysis on each point, removing the ones that do not reach a certain criteria. In particular, the mean distance of each point to its neighbors is computed, and if this distance is outside an interval centered in the mean of all the distances, then it is removed. An example can be seen in \cref{figure:sor-filter}.
+Usually point clouds contains different point densities, dependent on the distance of the object to the sensor. Also, measurement errors also occur next to edges or corners. As a result, point clouds tend to have outliers that can affect subsequent algorithms, like segmentation or registration algorithms. A usual solution is to perform an statistically analysis on each point, removing the points that do not reach a certain criteria. In particular, the mean distance of each point to its neighbors is computed, and if this distance is above or below an interval centered in the mean of all the distances, then it is removed. An example can be seen in \cref{figure:sor-filter}.
 
 \begin{figure}[h]
     
@@ -22,13 +20,13 @@ Usually point clouds contains different point densities, dependent on the distan
         
         \centering
         \includegraphics[width=0.8\textwidth]{table-with-outliers}
-        \caption{Before SOR}
+        \caption{Before SOR.}
         \label{figure:sor-filter-before}
     \end{subfigure}%
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
         \includegraphics[width=0.8\textwidth]{table-without-outliers}
-        \caption{After SOR}
+        \caption{After SOR.}
         \label{figure:sor-filter-after}
     \end{subfigure}
 
@@ -38,7 +36,7 @@ Usually point clouds contains different point densities, dependent on the distan
 
 \subsection{Voxel Grid Downsampling}
 
-This method downsamples, that is, reduce the number of points of a point cloud, using a voxel grid. A voxel is a cubical space and is the element in a tridimensional grid. So, each point in the point cloud belongs to some voxel. Then, in each voxel, all the points are represented by their centroid. This is an effective and fast method to downsample a point cloud. The level of detail can be parameterized with the voxel leaf-size (the size of each voxel in the $x,y,z$ direction). A smaller leaf-size maintains more details but generates a bigger point cloud. A bigger leaf-size does not keep as much detain but generates a smaller point cloud. As an example, \cref{figure:lucy-voxel-grid} shows the Stanford Lucy model\footnote{From "Stanford Scanning Repository" in \url{graphics.stanford.edu/data/3Dscanrep/}.} after a voxel grid downsampling with different leaf size values: \cref{figure:lucy-voxel-grid-2mm} with \SI{2}{\milli\meter} (288.000~pts), \cref{figure:lucy-voxel-grid-5mm} with \SI{5}{\milli\meter} (55.000~pts) and \cref{figure:lucy-voxel-grid-8mm} with \SI{2}{\milli\meter} (18.000~pts).
+This method downsamples, that is, reduce the number of points of a point cloud, using a voxel grid. A voxel is a cubic volumetric volume and is the element of a tridimensional grid. So, each point in the point cloud belongs to some voxel. Then, in each voxel, all the points are represented by their centroid. This is an effective and fast method to downsample a point cloud. The level of detail can be parameterized with the voxel leaf-size (the size of each voxel in the $x,y,z$ direction). A smaller leaf-size maintains more details but generates a larger point cloud. A larger leaf-size does not keep as much detain but generates a smaller point cloud. As an example, \cref{figure:lucy-voxel-grid} shows the Stanford Lucy model\footnote{From "Stanford Scanning Repository" in \url{graphics.stanford.edu/data/3Dscanrep/}.} after a voxel grid downsampling with different leaf size values: \cref{figure:lucy-voxel-grid-2mm} with \SI{2}{\milli\meter} (288.000~pts), \cref{figure:lucy-voxel-grid-5mm} with \SI{5}{\milli\meter} (55.000~pts) and \cref{figure:lucy-voxel-grid-8mm} with \SI{2}{\milli\meter} (18.000~pts).
 
 \begin{figure}[h]
     
@@ -46,19 +44,19 @@ This method downsamples, that is, reduce the number of points of a point cloud, 
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[height=6cm]{lady-voxel-2mm}
-        \caption{Leaf size of \SI{2}{\milli\meter}}
+        \caption{Leaf size of \SI{2}{\milli\meter}.}
         \label{figure:lucy-voxel-grid-2mm}
     \end{subfigure}%
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[height=6cm]{lady-voxel-5mm}
-        \caption{Leaf size of \SI{5}{\milli\meter}}
+        \caption{Leaf size of \SI{5}{\milli\meter}.}
         \label{figure:lucy-voxel-grid-5mm}
     \end{subfigure}%
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[height=6cm]{lady-voxel-8mm}
-        \caption{Leaf size of \SI{8}{\milli\meter}}
+        \caption{Leaf size of \SI{8}{\milli\meter}.}
         \label{figure:lucy-voxel-grid-8mm}
     \end{subfigure}
 

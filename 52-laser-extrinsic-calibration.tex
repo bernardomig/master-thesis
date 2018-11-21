@@ -1,14 +1,14 @@
 \section{Laser Extrinsic Calibration}
 \label{section:laser-extrinsic-calibration}
 
-The key for a good geometric reconstruction is the laser scanner extrinsic calibration, which has to be accurate, so that every point is correctly registered. Therefore, two calibration methods are here presented: the RADLOCC camera-laser calibration (\cref{section:radlocc-method}) and a new method developed in this work (\cref{section:proposed-method}), that aims to achieve better results than the latter. 
+The key for a good geometric reconstruction is the laser scanner extrinsic calibration, which has to be accurate, so that every point is correctly located. Therefore, two calibration methods are here presented: the RADLOCC camera-laser calibration (\cref{section:radlocc-method}) and a new method developed in this work (\cref{section:proposed-method}), that aims to achieve better results than the latter. 
 
-\subsection{Robust Automatic Detection in Laser Of Calibration Chessboards Method}
+\subsection{Robust Automatic Detection in Laser of Calibration Chessboards Method}
 \label{section:radlocc-method}
 
-In \cite{zhang04}, a method for auto calibration of a camera with a laser scanner is presented. This method, known as Robust Automatic Detection in Laser Of Calibration Chessboards, or RADLOCC, uses information from both sensors and tries to find point correspondences to optimize the calibration. In this work, this method was used together with the extrinsic calibration method (explained in \cref{section:camera-extrinsic-calibration}), to obtain the full extrinsic laser calibration.
+In \cite{zhang04}, a method for automatic calibration of a camera with respect to a 2D laser scanner is presented. This method, known as Robust Automatic Detection in Laser Of Calibration Chessboards, or RADLOCC, uses information from both sensors and tries to find point correspondences to compute the calibration. In this work, this method was used together with the extrinsic calibration method (explained in \cref{section:camera-extrinsic-calibration}), to obtain the full extrinsic laser calibration. As a result, this calibration obtains the transformation marked in red in \cref{figure:geometric-transformation-graph}.
 
-To use this method, the user has to obtain a calibration dataset, which is a set of synchronized images and laser scans containing a chessboard in multiple poses. The chessboard serves as the calibration object, which is the link between the two sensors. In this work, a ROS package was developed to handle this capture and to convert between the ROS messages and the RADLOCC format. Its source code and all documentation can be found in \url{https://github.com/bernardomig/radlocc_calibration}. In the 3D scanner, the laser scanner was positioned such that the laser scans are horizontal and about \numrange{20}{30} images were taken per dataset. Such images are shown in \cref{figure:radlocc-images}.
+To use this method, the user has to obtain a calibration dataset, which is a set of synchronized images and laser scans containing a chessboard in multiple poses. The chessboard serves as the calibration object, which is the link between the two sensors. In this work, a ROS package was developed to handle this capture and to convert between the ROS messages and the RADLOCC format. The laser scanner was positioned such that the laser scans are horizontal and about \numrange{20}{30} images were taken per dataset. Such images are shown in \cref{figure:radlocc-images}.
 
 
 \begin{figure}
@@ -34,22 +34,20 @@ To use this method, the user has to obtain a calibration dataset, which is a set
         \includegraphics[height=5cm]{radlocc_image_3}
     \end{subfigure}%
 
-    \caption{Images captured for RADLOCC}
+    \caption{Images captured for RADLOCC.}
     \label{figure:radlocc-images}
 \end{figure}
 
-First, a chessboard extraction algorithm finds both finds the intrinsic calibration of the camera, as well as the poses of each chessboard in the camera coordinate frame. Then, laser scans are segmented into board/background, and all the board points are extracted, as seen on \cref{figure:radlocc-points}.
+First, a chessboard extraction algorithm finds both the intrinsic calibration of the camera, as well as the poses of each chessboard in the camera coordinate frame. Then, laser scans are segmented into board and background, and all the points measured on the board are extracted, as seen on \cref{figure:radlocc-points}.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{radlocc_points}
-    \caption{Radlocc laser scans chessboard extraction}
+    \caption{Radlocc laser scans chessboard extraction.}
     \label{figure:radlocc-points}
 \end{figure}
 
-Then, the reprojection error of the laser scans points to the chessboard plane are computed, and the transformation from 
-
-Then, the reprojection error of the laser scans points to the chessboard plane are calculated, depending of the transformation from the camera to the laser scanner. This reprojection error is minimized during the calibration optimization, and the transformation from the camera to the laser if found.
+Then, the reprojection error of the laser scans points, obtained in the segmentation, to the chessboard plane,obtained by the pose estimation, are calculated, depending of the transformation from the camera to the laser scanner. This reprojection error is minimized during the calibration optimization, and the transformation from the camera to the laser if found.
 
 Finally, the extrinsic calibration can be calculated as:
 
@@ -58,33 +56,36 @@ Finally, the extrinsic calibration can be calculated as:
     T_{calibration} = \TF{PTU}{laser} = \TF{PTU}{camera} \cdot \TF{camera}{laser}.
 \end{equation}
 
-\subsection{Proposed Method}
+This calibration method, however, was not able to obtain an accurate result.
+
+\subsection{Planar Based Calibration}
 \label{section:proposed-method}
 
-A new method was developed in this work to calibrate the laser scanner in this system, because the previous method did not achieve the required results. One of the key differences to the previous method (in \cref{section:radlocc-method}) is that the calibration is done only using the laser range data, and the calibration from the PTU to the laser scanner is directly found. The hypothesis that this method uses to operate is that in a good calibration the deviation of a point set is minimal. In other words, in a point set representing a planar surface, the deviation from the points to the planar surface should be the lowest, if the extrinsic calibration is correct.
+A alternative method, the Planar Based Calibration, was developed in this work to calibrate the laser scanner in this system. One of the key differences to the previous method (in \cref{section:radlocc-method}) is that the calibration is done only using the laser range data, and the calibration from the PTU to the laser scanner is directly found (the transformation marked in blue in \cref{figure:geometric-transformation-graph}), so no camera is required. This method supposes that, in a good calibration, the deviation of a point set is minimal. In other words, in a point set representing a planar surface, the deviation from the points to the planar surface should be the lowest, if the extrinsic calibration is correct.
 
-This method is, therefore, an optimization problem. For each extrinsic calibration transformation $\mathcal{T}$, corresponds a point cloud $\mathcal{P}$, following the method shown on \cref{section:point-registration}. Then this point cloud is evaluated by a loss function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $\mathcal{T}$ that minimizes the loss function. Each one of these steps is described in detail next.
+This method is, therefore, an optimization problem. For each extrinsic calibration transformation $\mathcal{T}$, corresponds a point cloud $\mathcal{P}$, following the method shown on \cref{section:point-registration}. This point cloud is evaluated by a cost function, which determines quantitatively how good each generated point cloud is. Finally, an optimizer will find the transformation $T$ that minimizes the loss function. Each one of these steps is described in detail next.
 
 \subsubsection{Segmentation}
 
-This calibration method uses an acquisition as its dataset, which is a big advantage, so no calibrations patterns and no special apparatus is required, like chessboards or other marjers. Also, a point cloud has to be generated using a estimation of the calibration transformation. This point cloud does not have to be geometrically accurate but needs to be sufficient for the plane segmentation, which is done manually prior to the calibration. In this work, the software CloudCompare was used to segment the point cloud into multiple planes, and the data was saved as a scalar index in each point. An example of a segmentation can be seen in \cref{figure:cluster-segmentation-1}, where each cluster is represented with a different color.
+This calibration method uses an acquisition as its dataset, which is a significant advantage, since no calibrations patterns and no special apparatus is required, like chessboards or other markers. Also, a point cloud has to be generated using a estimation of the calibration transformation. This point cloud does not have to be geometrically accurate but the geometry should be perceivable for the plane segmentation, which is done manually prior to the calibration. In this work, the software CloudCompare was used to segment the point cloud into multiple planes, and the data was saved as a scalar index in each point. An example of a segmentation can be seen in \cref{figure:cluster-segmentation-1}, where each cluster is represented with a different color.
 
-The segmentation was not done automatically because most segmentation algorithms, for example the RANSAC algorithm, were not capable of achieving a reliable segmentation for the initial estimate, because the point cloud had significant deformation. In addition, manual segmentation is easy to do and accurate, considering that it is a one-time process.
+The segmentation was done manually because most segmentation algorithms, for example the RANSAC algorithm, were not capable of achieving a reliable segmentation for the initial estimate, because the point cloud had significant deformation. In addition, manual segmentation is easy to do and accurate, considering that it is a one-time process.
 
 During the optimization, this segmentation serves as a blueprint for all the segmentations. Each point cloud is generated in the same way, so the sequence of points is always the same. Therefore, it is always possible to match any point on the generated point cloud to the point in the segmented point cloud, and get the corresponding cluster index for all the points.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=.8\textwidth]{cluster-segmentation-1}
-    \caption{Example of a plane segmentation, where each color represents a cluster}
+    \caption{Example of a plane segmentation, where each color represents a cluster.}
     \label{figure:cluster-segmentation-1}
 \end{figure}
 
-\subsubsection{Loss Function}
+\subsubsection{Cost Function}
+\label{section:calibration-cost-function}
 
-A loss function, or cost function, is a measure in optimization that compares the result of a model with its expected result, and returns a value that describes the dissimilarity between the two. More concretely, in this calibration the loss function has two components: the loss function per cluster and the loss function per point cloud, which combines the loss of all the clusters. 
+The cost function is a measure used in optimization that compares the result of a model with its expected result, and returns a value that describes the dissimilarity between the two. More concretely, in this calibration the cost function has two steps: the cost is computed for each cluster and then the cost of all the clusters is combined into a single value, which is the final cost of the point cloud.
 
-To start with, the plane equation for each cluster is found, using the same method as in \cref{section:normal-estimation}, the Principal Component Analysis, or PCA. First the centroid $\bar{p}$ of each plane is found, which is the same as the mean value of all the points $p: (x, y, z) \in \textbf{R}^3$:
+In an inicial step, the plane equation for each cluster is computed, using the Principal Component Analysis method, or PCA. First the centroid $\bar{p}$ of each plane is found, which is the same as the mean value of all the points $p: (x, y, z) \in \textbf{R}^3$:
 
 \begin{equation}
     \bar{p} = \sum_{i}{p_i}.
@@ -98,9 +99,9 @@ Then, the covariance matrix $\mathcal{C}$ is calculated:
         \label{eqn:covariance-matrix}
 \end{equation}
 
-Then, the principal axes of the plane is find by an eigen decomposition of the covariance matrix. The smallest eigenvalue $\lambda_3$ will be the variance $\sigma^2$ of the cluster. In other words, $\sigma^2$ is the mean square of the orthogonal distance of all points in the cluster to the plane. So, $\sigma^2$ can be a quantitative factor to measure the loss for each plane. Formally, let us admit that the $\sigma^2$ has two components: the statistical error of the laser sensor $\sigma^2_{sensor}$, which is not affected by the calibration and a second component $\sigma^2_{calib}$, which results from the calibration error. Thus, it is possible that by minimizing $\sigma^2$, a exact calibration can be obtained. For this calibration, however, the value $\sigma$ was used instead of $\sigma^2$, which is known as the Root Mean Square Deviation, or RMS. Therefore, the loss of each cluster will be the $\sigma$ value.
+Then, the principal axes of the plane is find by an eigen decomposition of the covariance matrix. The smallest eigenvalue $\lambda_3$ will be the variance $\sigma^2$ of the cluster. In other words, $\sigma^2$ is the mean square of the orthogonal distance of all points in the cluster to the plane. So, $\sigma^2$ can be a quantitative factor to measure the cost or each cluster. Formally, let us admit that the $\sigma^2$ has two components: the statistical error of the laser sensor $\sigma^2_{sensor}$, which is not affected by the calibration and a second component $\sigma^2_{calib}$, which depends of the calibration error. Thus, the idea is that, by minimizing $\sigma^2$, a exact calibration can be obtained. For this calibration, however, the value $\sigma$ was used instead of $\sigma^2$, which is known as the Root Mean Square Deviation, or RMS. Therefore, the loss of each cluster will be the $\sigma$ value.
 
-Next, the losses of the clusters are combined into a scalar value, which is the loss of the point cloud. The method found was to, again, calculate the RMS of the values of the partial losses $\textrm{loss}_i$, according to \cref{eqn:rms}. This value is expected to be minimal when all the partial losses are minimal which, according to this hypothesis, corresponds to a correct calibration.
+Next, the scores of the clusters are combined into a scalar value, which is the error of the point cloud. The method found was to, again, calculate the RMS of the values of the partial losses $\textrm{loss}_i$, according to \cref{eqn:rms}. This value is expected to be minimal when all the partial losses are minimal which, according to this hypothesis, corresponds to a correct calibration.
 
 \begin{equation}
     \label{eqn:rms}
@@ -109,11 +110,11 @@ Next, the losses of the clusters are combined into a scalar value, which is the 
 
 \subsubsection{Paramerization}
 
-The parameters in this calibration should define a geometric transformation in space, which is, in the end, a transformation matrix (\cref{eqn:transformation-matrix}). This transformation can be decomposed into two components, a translation and a rotation. The translation can be represented as the vector $t = (t_x, t_y, t_z)$, and the rotation can be represented as a $3 \times 3$ rotation matrix $R$. Since a rotation matrix has only $3 \times 3 = 9$ elements but only 3 degrees of freedom, another parameterization has to be used to represent a rotation. Popular parameterization for rotations are euler angles, quaternions and axis/angle representation. 
+The parameters in this calibration are six values that define a geometric transformation in space, which is, in the end, a transformation matrix $T$ (\cref{eqn:transformation-matrix}). This transformation can be decomposed into two components, a translation and a rotation. The translation can be represented as the vector $t = (t_x, t_y, t_z)$, and the rotation can be represented as a $3 \times 3$ rotation matrix $R$. Since a rotation matrix has only $3 \times 3 = 9$ elements but only 3 degrees of freedom, another parameterization has to be used to represent a rotation. Popular parameterization for rotations are euler angles, quaternions and axis/angle representation. 
 
 \begin{equation}
     \label{eqn:transformation-matrix}
-    \mathcal{T} = \left[
+    T = \left[
         \begin{array}{cccc}
             r_{11} & r_{12} & r_{13} & t_x \\
             r_{21} & r_{22} & r_{23} & t_y \\
@@ -123,9 +124,9 @@ The parameters in this calibration should define a geometric transformation in s
     \right]
 \end{equation}
 
-However, not all representations are suitable for an optimization. In fact, in~\cite{hornegger99} the term fair parameterization was introduced: a parameterization is called fair, if it does not introduce more numerical sensitivity than the one inherent to the problem itself. Therefore, fair parameterization are a requirement for optimizations, as it increases the changes of convergence. For example, euler angles, which are probably the most used angle parameterization, are not suitable for optimizations~\cite{schmidt01}, because they do not yield smooth movements, each rotation is non-unique and, most notably, there are singularities, so-called \textit{gimbal-lock} singularities, where one degree of freedom is lost~\cite{schmidt01}. Also, quaternions are not suitable for optimizations, because quaternions have $4$ components which are norm-1 constrained. Despite being a fair parameterization, quaternions introduce some complexity in the algorithm to handle the norm-1 constrain, so they are not usually used for optimizations~\cite{schmidt01}.
+However, not all representations are suitable for an optimization. In fact, in~\cite{hornegger99} the term fair parameterization was introduced: a parameterization is called fair, if it does not introduce more numerical sensitivity than the one inherent to the problem itself. Therefore, fair parameterization are a requirement for optimizations, as it increases the chances of convergence. For example, euler angles, which are probably the most used angle parameterization, are not suitable for optimizations~\cite{schmidt01}, because they do not yield smooth movements, each rotation is non-unique and, most notably, there are singularities, so-called \textit{gimbal-lock} singularities, where one degree of freedom is lost~\cite{schmidt01}. Also, quaternions are not suitable for optimizations, because quaternions have $4$ components which are constrained to an unitary length. Despite being a fair parameterization, quaternions introduce some complexity in the algorithm to handle this constrain, so they are not usually used for optimizations~\cite{schmidt01}.
 
-The axis/angle parameterization is the most widely used to represent a rotation in an optimization, as it is a fair parameterization and has only three components. Any rotation can be represented as a rotation around an axis $a$, by an angle $\theta$. Since $a$ only represent the direction of the rotation (hence only has 2 degrees of freedom), it can be combined with the angle $\theta$ into a single vector $\omega$, as in \cref{eqn:axis-angle}.
+The axis/angle parameterization is the most widely used to represent a rotation in an optimization, as it is a fair parameterization and has only three components. Any rotation can be represented as a rotation around an axis $a$, by an angle $\theta$. Since $a$ only represent the direction of the rotation (hence only has 2 degrees of freedom), it can be combined with the angle $\theta$ into a single vector $\omega = \left(\omega_1, \omega_2, \omega_3\right)$, as in \cref{eqn:axis-angle}.
 
 \begin{equation}
     \label{eqn:axis-angle}
@@ -135,7 +136,7 @@ The axis/angle parameterization is the most widely used to represent a rotation 
     \end{aligned}
 \end{equation}
 
-Computing the rotation matrix from $\omega$ is done using the Rodrigues' formula~(\cref{eqn:rogriguez-1,eqn:rogriguez-2})~\cite{schmidt01}.
+Computing the rotation matrix from $\omega$ is done using the Rodrigues' formula~(\cref{eqn:rogriguez-1,eqn:rogriguez-2})~\cite{schmidt01}:
 
 \begin{align}
     \label{eqn:rogriguez-1}
@@ -147,8 +148,11 @@ Computing the rotation matrix from $\omega$ is done using the Rodrigues' formula
             \omega_3 & 0   & -\omega_1 \\
             -\omega_2 & \omega_1 & 0 \\
         \end{array}
-    \right]
+    \right],
 \end{align}
+
+\noindent
+where I is the $3\times3$ identity matrix, $\theta$ is the angle and $\omega_1$, $\omega_2$ and $\omega_3$ are the components of $\omega$.
 
 In conclusion, the parameter vector will have 6 values: 3 representing the translation ($t_1, t_2, t_3$) and 3 representing the rotation in the axis/angle representation ($r_1, r_2, r_3$). So, the parameter vector is shown in \cref{eqn:parameter-vector}.
 
@@ -157,9 +161,13 @@ In conclusion, the parameter vector will have 6 values: 3 representing the trans
     P = \{t_1, t_2, t_3, r_1, r_2, r_3\}
 \end{equation}
 
+\subsection{First Guess}
+
+This optimization was quite robust to the initial parameters, so the first guess was always a null translation and the rotation was done doing a visual inspection of the laser scanner, using angles multiples of \SI{90}{\degree}.
+
 \subsubsection{Optimizer}
 
-The optimization is performed by the Powell's method, described in \cite{powell_method}. This method finds a local minimum of a multi-dimensional unconstrained function, and does not require the gradient of this function, which fits this particular optimization. This method is implemented in the python scientific library SciPy\footnote{See the Scipy reference in \url{https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html}.}.
+The optimization is performed using the Powell's method, described in \cite{powell64}. This method finds a local minimum of a multi-dimensional unconstrained function, and does not require the gradient of this function (is unknown in this problem), which fits this particular optimization. This method is implemented in the python scientific library SciPy\footnote{See the Scipy reference in \url{https://docs.scipy.org/doc/scipy/reference/optimize.minimize-powell.html}.}.
 
 \subsubsection{Overview}
 
@@ -172,34 +180,37 @@ To sumarize, the overview of the entire steps of the calibration is shown in \cr
             data/.style={draw, ellipse},
         ]
 
-        \node[data, anchor=east] (laserscans) at (-2, 0.6) {laserscans};
-        \node[data, anchor=east] (transformations) at (-2, -0.6) {transformations};
+        \node[data, anchor=east] (laserscans) at (-2.5, 1.2) {laserscans};
+        \node[data, anchor=east] (transformations) at (-2.5, -0.6) {transformations};
 
-        \node[data] (parameters) at (0, -4) {parameters};
+        \node[data] (parameters) at (0.5, -4) {parameters};
 
         \node[process] (registration) at (0,0) {Points \\ Registration};
-        \node[process] (segmentation) at (3.5,0) {Segmentation};
-        \node[process] (loss) at (7,0) {Loss};
+        \node[process] (segmentation) at (3,0) {Segmentation};
+        \node[process] (cost) at (6.5,0) {Cost Function};
+
+        \node[align=center, rotate=90, draw, rectangle, minimum width=2cm] (transform_plus) at (-1.5, -0.6) {Combine};
 
         \node[align=center, draw, rectangle, minimum width=4cm] (optimizer) at (5, -4) {Optimizer};
 
-        \draw[-latex] (laserscans) -- ($(registration.north) + (0,0.6)$);
-        \draw[-latex] (transformations) -- ($(registration.north) + (0,-0.6)$);
+        \draw[-latex] (laserscans) -- ($(registration.north) + (0,1.2)$);
+        \draw[-latex] (transformations) -- (transform_plus);
+        \draw[-latex] (transform_plus) -- ($(registration.north) + (0,-0.6)$);
 
-        \draw[-latex] (parameters) -- (registration);
+        \draw[-latex] (parameters) -| (transform_plus);
 
         \draw[-latex] (registration) -- (segmentation) node[midway, above] {pointcloud};
 
         \foreach \y in {-1, -0.5, ..., 1} {
-            \draw[-latex] ($(segmentation.south) + (0, \y)$) -- ($(loss.north) + (0,\y)$)
+            \draw[-latex] ($(segmentation.south) + (0, \y)$) -- ($(cost.north) + (0,\y)$)
                 node[midway, above] {cluster};
         };
 
-        \draw[-latex] (loss) -- ++(2, 0) node[midway, above] {loss} |- (optimizer);
+        \draw[-latex] (cost) -- ++(2, 0) node[midway, above] {cost} |- (optimizer);
         \draw[-latex] (optimizer) -- (parameters);
-        
+
     \end{tikzpicture}
 
-    \caption{Calibration Overview}
+    \caption{Calibration Overview.}
     \label{figure:calibration-overview}
 \end{figure}

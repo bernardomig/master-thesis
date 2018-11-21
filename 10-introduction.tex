@@ -1,38 +1,35 @@
 \chapter{Introduction}
 
-Digital reconstruction of three dimensional scenes is a field that gained a high importance in areas like architecture, robotics, archeology and autonomous driving. As an example, virtual reality technologies allows high-detail and high-resolution models to be experiences in an immersive 3D experience, and the technology is becoming available for the general public, as prices for this 3D headsets and VR-ready phones decrease. These new technologies create a demand for reconstruction technology and new algorithms that are accurate and of high quality.
+Digital reconstruction of three dimensional scenes is a field that gained a high importance in areas like architecture, robotics, archeology and autonomous driving, and its goal is to produce high-detail and accurate models of real 3D scenes. These models can be then used, for example, in virtual reality, to provide and immersive experience, as if the used was in the real scene. Nowadays, 3D reconstruction is even available in, usually targeting Augmented Reality applications.
 
 \section{Motivation}
 
-Despite all the work done, there is still no perfect solution. 3D reconstruction is still a challenge, because real scenes are very complex and measurements are subject to errors and noise. Past experience tells that a single sensor is not enough to model real environments, so currently the process lies into using multiple sensors and trying to merge the data from all the sensors, in order to capture a more realistic model.
+3D reconstruction is still a challenge. First, real scenes have a complex geometric and objects can have small details that are hard to reproduce. Secondly, the measurements from sensors are subject to noise and errors, and are limited. For example, LiDAR lasers scanners are incapable to capture the color of the objects.
 
-However, this introduces a set of other problems inherent to this approach. For example, the data from different sensors needs to be merged accurately. Also, the positions of all the sensors need to be known accurately, which means that the calibration processes need to be more robust and precise.
+Past experience tells that a single sensor is not enough to model real environments, so currently the process lies into using multiple sensors and trying to merge the data from all the sensors, in order to capture a more realistic model.
 
-Also, current reconstruction algorithms require a large amount of manual work, which means that a reconstruction require many man-hours to be completed, which is unfeasible for most applications. One of the goals of reconstruction is to develop algorithms that are automatic and do not require any intervention, making it faster and more accessible. 
+However, this introduces a set of other problems inherent to this approach. One challenge is the registration of the different sensors, so that the data from one sensor can be accurately merged with the data from the other sensor. More specifically, the positions of the sensors need to be known accurately as well as their internal parameters. These parameters are determined using calibrations methods that need to be robust and precise.
 
-An automatized reconstruction method is still a challenge today, but new algorithms could allow it, which would make reconstruction work more accessible.
-
-Nowadays, 3D reconstruction software is even available in smartphones, usually targeting Augmented Reality applications. However, these 3D reconstructions are not accurate and the resulting models are far from perfect.
+Current reconstruction algorithms require a large amount of manual work, which means that a reconstruction require many man-hours to be completed, which is unfeasible for most applications. One of the goals of reconstruction is to develop algorithms that reduce human intervention, making it faster and more accessible. 
 
 \section{Problem Description}
 
-Nowadays, Lidar laser scanners are becoming more available and more accessible,  and because of their properties, as their high precision and high range, became an unmatched technology for 3D reconstruction. The lidar lasers are available as 2D laser scanners or 3D laser scanners, like the Velodyne. Despite their immense potential, 3D laser scanner is still a very expensive solution and cheaper solutions are comprised of a cheaper 2D laser scanner mounted on a moving frame. This solution, despite its low cost, can achieve good results, but requires a fine calibration. 
+Lidar laser scanners are becoming more available and more accessible,  and because of their properties, as their high precision and high range, became an unmatched technology for 3D reconstruction. The LiDAR lasers are available as 2D laser scanners or 3D laser scanners, like the lasers from FARO and Riegl. Despite their immense potential, 3D laser scanners are still a very expensive solution and cheaper solutions are comprised of a cheaper 2D laser scanner mounted on a moving frame. This solution, despite its low cost, can achieve good results, but requires a fine calibration between the laser and the moving frame. 
 
 Also, laser scanners do not register the color information, so a common practice is to pair the laser scanner with a camera to get both geometric and color data. This method also requires a fine calibration between both sensors to correctly merge the data. 
 
 \section{Objectives}
 
-The objective is to develop a fully integrated solution for 3D acquisition using both laser and image data. This objective was divided into four main objectives.
+The objective is to develop a fully integrated solution for 3D acquisition using both laser scanner and a camera. This objective was divided into four main objectives:
 
-The first objective was to develop a 3D laser scanner, consisting of a laser scanner and a camera, and capable of recording data from both sensors in a fast and semi-autonomous way.
+\begin{itemize}
+    \item develop a 3D laser scanner, consisting of a laser scanner and a camera, and capable of recording data from both sensors in a fast and semi-autonomous way;
+    \item define a methodology to record the data from the scene. In particular, it has to define the movements of the moving frame of the laser scanner and the camera and also when and where the laser scans and the images are recorded. This methodology should take into account the limitations of both sensors and the geometry of the scene;
+    \item develop a set of methods to reconstruct the geometry of the scene reliably. The main challenge is the laser scanner to PTU extrinsic calibration, because it is fundamental for a reliable reconstruction;
+    \item develop a set of methods to merge the image data with the geometry of the scene, to obtain a fully colorized 3D model.
+\end{itemize}
 
-The second objective was to define a methodology to record the data from the scene. This methodology should take into account the limitations of both sensors and try to minimize their effect in the final result.
-
-The third objective was to develop a set of methods to reconstruct the geometry of the scene reliably. The main challenge is the extrinsic calibration of the laser, because it is fundamental for a reliable reconstruction. So, a new calibration method was developed to achieve the wanted results.
-
-The fourth and final objective was to develop a set of methods to merge the image data with the geometry of the scene, to reconstruct the color.
-
-The final result is then, a point cloud with color and geometric information.
+The final result is, then, a point cloud with color and geometric information.
 
 \section{Document Outline}
 

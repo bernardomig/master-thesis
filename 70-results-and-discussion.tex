@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{section:results}
 
-In order to evaluate the proposed methods, multiple captures were taken from the department of Mechanical Engineering at the \textit{Universidade de Aveiro}. These proposed methods were tested with these captures and the results are shown in this chapter.
+In order to evaluate the proposed methods, multiple acquisitions were taken from the department of Mechanical Engineering at the \textit{Universidade de Aveiro}.
 
 \section{Dataset Description}
 \label{section:results-dataset-description}
@@ -37,23 +37,25 @@ In total, six captures were taken from three hallways of the department, using a
 
 The geometric reconstruction is the first part of the 3D reconstruction and uses the laser scanner data and the PTU transformation to obtain the non-colorized point cloud. This reconstruction relies on the extrinsic calibration of the laser to register the laser scans precisely, which is described in detain in \cref{section:laser-extrinsic-calibration}. Moreover, a new method to obtain the normals of the points was developed (\cref{section:normal-estimation}), as well as the methodology to register spatially the multiple acquisitions (\cref{section:acquisition-registration}). At the end of this registration, a point cloud resulted from all the acquisitions should be obtained.
 
+
+
 \subsection{Extrinsic Laser Calibration}
 
-The extrinsic calibration of the laser scanner is one of the prime factors of the geometric registration, because a bad calibration results in a deformed point cloud, as seen in \cref{figure:uncallibrated-pointcloud}. In this work, two calibration methods were used: one pre-existing method called RADLOCC and one method developed in this work, which attempts to be more accurate than the previous method. 
+The extrinsic calibration of the laser scanner is one of the main factors that influenced the geometric registration, because a bad calibration results in a deformed point cloud, as seen in \cref{figure:uncallibrated-pointcloud}. In this work, two calibration methods were used: one pre-existing method called RADLOCC and one method developed in this work, which attempts to be more accurate than the previous method. 
 
 \begin{figure}[h]
     
     \centering
     \includegraphics[width=0.7\textwidth]{uncallibrated-pointcloud}
 
-    \caption{Uncalibrated point cloud of the capture 3}
+    \caption{Uncalibrated point cloud of the capture 3.}
     \label{figure:uncallibrated-pointcloud}
 
 \end{figure}
 
 \subsubsection{RADLOCC}
 
-The RADLOCC calibration, described in \cref{section:radlocc-method}, was the first method used to obtain the extrinsic calibration of the laser scanner. This method requires multiple pairs of images and laser scans captured from a chessboard target. Then, the chessboard is extracted from both sensors and the calibration expects to match the extracted features. The evaluation of the calibration can be done by the re-projection of the laser scans onto the images, where the edges of the laser scan should be coincident with the edges of the chessboard, as seen in \cref{figure:radlocc-reprojection}. In total, six calibration datasets were obtained using the SICK LMS100 sensor, which have around 20 to 40 images and laser scans pairs. The results obtained are shown in table \cref{table:radlocc-results}.
+The RADLOCC calibration, described in \cref{section:radlocc-method}, was the first method used to obtain the extrinsic calibration of the laser scanner. The evaluation of this calibration can be done by the re-projection of the laser scans onto the images, where the edges of the laser scan should be coincident with the edges of the chessboard, as seen in \cref{figure:radlocc-reprojection}. In total, six calibration datasets were obtained using the SICK LMS100 sensor, which have around 20 to 40 images and laser scans pairs. The results obtained are shown in table \cref{table:radlocc-results}.
 
 \begin{figure}[h]
     
@@ -105,11 +107,13 @@ The RADLOCC calibration, described in \cref{section:radlocc-method}, was the fir
 
 \end{table}
 
-As seen, the resulting transformations have a large deviation between calibration, both in rotation and translation. This, associated with the fact that the full extrinsic calibration requires the extrinsic calibration of the camera, which also has significant error, justifies that this method is not suitable or capable for this application. 
+It was expected to see similar results along the calibration, because the datasets were taken with similar conditions. However, there are large variations: for example, the translation on the $x$ axis between the dataset 2 and 3 has a difference of around \SI{0.07}{\meter}. This is not a negligible difference and, in the end, this can affect the geometry of the point cloud.
 
-\subsubsection{Proposed method}
+In conclusion, the resulting transformations have a large deviation between calibration, both in rotation and translation. This, associated with the fact that the full extrinsic calibration requires the extrinsic calibration of the camera, which also has significant error, justifies that this method is not suitable or capable for this application. 
 
-The proposed method for the calibration uses the same data as the one used for the geometric reconstruction. The first step is the segmentation of the planes by a manual approach using the software \textit{CloudCompare}. At the end of this step, each point has a correspondent integer index, which is called the cluster index. This method was required to be manual because the point cloud obtained by the initial estimate is deformed and the planes are not possible to be segmented by a automatic algorithm. In figure \cref{figure:segmented-pointcloud-full}, a segmented point cloud can be seen, correspondent to the capture 3. Specifically, the deformation of the point cloud results in planes that appear curved, discontinuous or duplicated, as seen in \cref{figure:segmented-pointcloud-detail}. It is expected that after the calibration this deformations are not existent.
+\subsubsection{Planar Based Calibration Method}
+
+The proposed method for the calibration uses the same data as the one used for the geometric reconstruction. The first step is the manual segmentation of the planes. At the end of this step, each point has a correspondent integer index, which is called the cluster index.  In figure \cref{figure:segmented-pointcloud-full}, a segmented point cloud can be seen, correspondent to the capture 3. Specifically, the deformation of this point cloud results can be as seen in \cref{figure:segmented-pointcloud-detail}.
 
 \begin{figure}[h]
     
@@ -128,7 +132,37 @@ The proposed method for the calibration uses the same data as the one used for t
 
 \end{figure}
 
-After the segmentation, the calibration score is minimized to obtain the extrinsic calibration of the laser scanner, as described in \cref{section:proposed-method}. For the initial estimate, a rough transformation was obtained via visual inspection. The result of a single acquisition is shown in \cref{figure:calibration-results-acquisition-3}. The initial score was \num{3.9e-3} and after 10 steps the score was reduced to about \num{1.1e-4}. The time required to this calibration is about \num{20}~minutes.
+After the segmentation, the calibration score is minimized to obtain the extrinsic calibration of the laser scanner, as described in \cref{section:proposed-method}. For the initial estimate, a rough transformation was obtained via visual inspection. The result of a single acquisition is shown in \cref{figure:calibration-results-acquisition-3}. The initial score was \num{3.9e-3} and after 10 steps the score was reduced to about \num{1.1e-4}. The resulting point cloud at each step can be seen in \cref{figure:calibration-iterations}. The time required to this calibration is about \num{20}~minutes.
+
+\begin{figure}[h]
+    
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{calibration-it-01}
+        \caption{Iteration 1.}
+        \label{figure:calibration-it-1}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{calibration-it-04}
+        \caption{Iteration 4.}
+        \label{figure:calibration-it-4}
+    \end{subfigure}
+
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{calibration-it-05}
+        \caption{Iteration 5.}
+        \label{figure:calibration-it-5}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{calibration-it-07}
+        \caption{Iteration 7.}
+        \label{figure:calibration-it-7}
+    \end{subfigure}
+
+    \caption{Resulting point cloud at each iteration in the optimization process.}
+    \label{figure:calibration-iterations}
+
+\end{figure}
 
 \begin{figure}[h]
 
@@ -144,14 +178,16 @@ The resulting calibration does indeed improve the geometry of the point cloud, s
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{calibration-comparison}
-    \caption{Comparison between the calibrated point cloud (in red) and the non-calibrated point cloud (in green)}
+    \caption{Comparison between the calibrated point cloud (in red) and the non-calibrated point cloud (in green).}
     \label{figure:calibration-comparison}
 \end{figure}
 
-In general, this calibration method successfully yields the same results for different acquisitions and captures. In other words, the calibration is repeatable. For example, the transformations obtained for a set of acquisitions of the capture 5 has similar results across the acquisitions, as shown in \cref{table:extrinsic-calibration-multiple-acquisitions}.
+In general, this calibration method successfully yields similar results for different acquisitions and captures. In other words, the calibration is repeatable. For example, the transformations obtained for a set of acquisitions of the capture 5 has similar results across the acquisitions, as shown in \cref{table:extrinsic-calibration-multiple-acquisitions}.
+
+As seen, the standard deviation $\sigma$ in this calibration is much less that in the RADLOCC calibration. For example, in the translation in the $x$ axis, in RADLOCC $\sigma \approx \SI{0.02}{\meter}$, while in this calibration it was $\sigma \approx \SI{0.002}{\meter}$, which is approximately ten times less.
 
 \begin{table}
-    \caption{Extrinsic calibration obtained using multiple acquisitions}
+    \caption{Extrinsic calibration obtained using multiple acquisitions.}
 
     \centering
     \begin{tabu}{@{}c ccc c cccc@{}}
@@ -178,9 +214,9 @@ Therefore, the proposed calibration can be a reliable method to obtain the extri
 
 \begin{enumerate}
     \item The method directly obtains the extrinsic transformation of the laser scanner, instead of a partial transformation (to the camera). This also decreases the error that would come from the intrinsic and extrinsic calibration of the camera.
-    \item This calibration uses exclusively the laser scanner data, which is more accurate than images. Moreover, the number of laser scans used are also greater than in the RADLOCC method, which can explain the lesser error found in this calibration method.
+    \item This calibration uses exclusively the laser scanner data, which is more accurate than images, because it is a direct measurement, as opposed to the transformation resulting from a pose estimation algorithm. Moreover, the number of laser scans used are also greater than in the RADLOCC method, which can explain the smaller error found in this calibration method.
     \item This calibration acknowledges and benefits from the movement of the PTU, as opposed to the RADLOCC, which was designed for static laser scanners. The laser scanner has to be static in RADLOCC, so that the background segmentation of the laser scans is possible.
-    \item The method proposed uses the data from the acquisitions directly, so the calibration process can be done even after the capture is made, or if the laser scanner is not available. This can be useful if the prior calibration did not have the accuracy required for the acquisition, for example, if the calibration was done using a smaller scene, or if the equipment has changed or is not available.
+    \item The method proposed uses the data from the acquisitions directly, so the calibration process can be done even after the capture is made, or if the laser scanner is not available. This can be useful if the prior calibration did not have the accuracy required for the acquisition, for example, if the calibration was done using a smaller scene, or if the equipment has changed or is not available. The only requirement is that there are enough planes in the scene for the calibration.
 \end{enumerate}
 
 \subsection{Normal Estimation}
@@ -189,7 +225,7 @@ Therefore, the proposed calibration can be a reliable method to obtain the extri
 In this section, the results obtained from the Normal Estimation method described in \cref{section:normal-estimation} are shown and compared to the more traditional method using the $k$-nearest-Neighbors. Both methods have similar results, as shown in \cref{figure:normal-estimation-results}, however, there are differences:
 
 \begin{enumerate}
-    \item The proposed method relies on a continuous movement in pan, while recording the laser scans. However, this was not the case for the acquisitions, because the movement was interrupted to record the images. This explains the stripes of points with the wrong normals that are shown in the results.
+    \item The proposed method relies on a continuous movement in pan, while recording the laser scans. However, this was not the case for the acquisitions, because the movement was interrupted to record the images. This can explain why some points have the wrong normals. However, this limitation can be surpassed if the movement of the PTU is continuous.
     \item This method can only be used for each acquisition and can not be generalized for any point cloud, because it required that the point cloud is structured in a 2D structure. The other method, however, works for any point cloud.
     \item The computational complexity of the proposed method is $O(N)$, while the complexity of the method using the $k$-Neighbors is $O(N \log N)$, which has an increasing impact for large point clouds. For example, in a point cloud with 5 million points (for example, in captures 5 and 6), the time required to calculate the normals using the proposed method is \SI{10}{\second} (using a implementation in python, which is regarded as a slow language for numerical computations) and using the $k$-neighbors method the time required is about \SI{10}{\minute}.
 \end{enumerate}
@@ -218,7 +254,7 @@ In this section, the results obtained from the Normal Estimation method describe
 
 \subsection{Acquisition Registration}
 
-The method for the acquisition registration uses the ICP algorithm, which find the transformation between two point clouds by the minimization of the distance between the point clouds. This distance metric used was the distance between close points. However, finding the closest points in the two point clouds is a difficult task and can be wrong if two point clouds are far apart. In particular, the point clouds transformation is the distance between the acquisition poses, which is in the order of meters. The ICP method, however, is only successful for differences in the order of centimeters. Any difference greater than that results in a wrong registration, as seen in \cref{figure:icp-results}. The solution found was to manually align the point clouds first, and then use the ICP algorithm as a fine alignment. This solution is sub-optimal, as it is not automatic, thus requiring manual work. These shortcomings in the acquisition registration can be solved by either enhancing the ICP algorithm to improve the registration for large differences, or by providing the inicial estimate for the transformation between each acquisition.
+The method for the acquisition registration uses the ICP algorithm, which find the transformation between two point clouds by the minimization of the distance between the point clouds. However, finding the closest points in the two point clouds is a difficult task and can be wrong if two point clouds are far apart. In particular, the point clouds transformation is the distance between the acquisition poses, which is in the order of meters. The ICP method, however, is only successful if the manual alignment is already very close. Any noticeable misalignment results in a wrong registration, as seen in \cref{figure:icp-results}. The solution found was to manually align the point clouds first, and then use the ICP algorithm as a fine alignment. This solution is sub-optimal, as it is not automatic, thus requiring manual work. These shortcomings in the acquisition registration can be solved by either enhancing the ICP algorithm to improve the registration for large differences, or by providing the inicial estimate for the transformation between each acquisition.
 
 \begin{figure}[h]
     
@@ -250,7 +286,39 @@ The method for the acquisition registration uses the ICP algorithm, which find t
 
 \end{figure}
 
-Another disadvantage of the ICP algorithm is that the registration is pairwise. In this work, multiple point clouds were registered, and the inability of the ICP to register more than two point clouds at once implies that the registration does not use the full spectrum of data available, and is constrained to only the two point clouds at each registration. This suggests that a registration which is done between two point clouds with small overlap, which results in a weaker registration, could be avoided. If the algorithm used the entire data set, the registration would be done with the most overlap possible, and number of common points is maximized. To circumvent this problem, the three alternative methods are shown in \cref{section:acquisition-registration}. However, only the second method was proven to be effective in this work. This method registers the point clouds to an accumulated point cloud resulted by the fusion of the prior registered point clouds. The success of this method can be explained due to the increasing overlap existent in further registrations. In fact, the registrations that are done last are usually faster and more accurate (based on the output RMS value of the ICP algorithm).
+Another disadvantage of the ICP algorithm is that the registration is pairwise. In this work, multiple point clouds were registered, and the inability of the ICP to register more than two point clouds at once implies that the registration does not use the full spectrum of data available, and is constrained to only the two point clouds at each registration. This suggests that a registration which is done between two point clouds with small overlap, which results in a weaker registration, could be avoided. If the algorithm used the entire data set, the registration would be done with the most overlap possible, and number of common points is maximized. To circumvent this problem, the three alternative methods are shown in \cref{section:acquisition-registration}. 
+
+However, only the second method was proven to be effective in this work. This method registers the point clouds to an accumulated point cloud resulted by the fusion of the prior registered point clouds. The success of this method can be explained by the increasing overlap existent in further registrations. The other methods fail because there are point clouds that have so small overlap that the ICP method always fail. For example, in the \cref{figure:icp-methods}, two registrations are done, where the target point cloud is colorized in red. As seen, the registration fails in the pairwise registration (against other point cloud in green), but is successful when the reference point cloud is the accumulated point cloud (in green).
+
+\begin{figure}[h]
+    
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{icp-error-before}
+        \caption{Pairwise registration (before).}
+        \label{figure:icp-method-1-wrong}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{icp-error-after}
+        \caption{Pairwise registration (after).}
+        \label{figure:icp-method-1-right}
+    \end{subfigure}
+
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{icp-accumulated-before}
+        \caption{Accumulated registration (before).}
+        \label{figure:icp-method-2-before}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{icp-accumulated-after}
+        \caption{Accumulated registration (after).}
+        \label{figure:icp-method-2-after}
+    \end{subfigure}
+
+    \caption{Comparison of the ICP registration between two point clouds or between the accumulated point cloud and another point cloud.}
+    \label{figure:icp-methods}
+
+\end{figure}
 
 In conclusion, the ICP algorithm is not sufficient for an automatic registration of the acquisitions. However, with manual intervention as a first registration, the ICP algorithm can be used to find the fine registration of the acquisitions. Using this method, the registrations were possible, as shown in \cref{figure:icp-results}.
 
@@ -266,17 +334,15 @@ In conclusion, the ICP algorithm is not sufficient for an automatic registration
 
 \subsection{Influence of the different laser scanners}
 
-In this work, three different laser scanners were used to study the influence of the different characteristics of each one on the reconstruction process. 
+In this work, three different laser scanners were used to study the influence of the different characteristics of each one on the reconstruction process.
 
-Firstly, the aperture of the laser and the range are important factors in the capture process. As an example, the Hokuyo URG04 has a small range of \SI{5.6}{\meter}, compared to the larger range of the two other lasers, which both have a range of \SI{30}{\meter}. The resulting point clouds are, then, much smaller in the case of the Hokuyo~URG04, which means that more acquisitions are required to capture a scene, and the distance between each acquisition should not be larger that the range of the laser scanner. Otherwise, there is no overlap between acquisitions so the acquisition registration would fail. The same can be applied to the aperture of the laser scanner. 
+The aperture of the laser and the range are important factors in the capture process. As an example, the Hokuyo URG04 has a small range of \SI{5.6}{\meter}, compared to the larger range of the two other lasers, which both have a range of \SI{30}{\meter}. The resulting point clouds are, then, much smaller in the case of the Hokuyo~URG04, which means that more acquisitions are required to capture a scene, and the distance between each acquisition should not be larger that the range of the laser scanner. Otherwise, there is no overlap between acquisitions so the acquisition registration would fail. The same can be applied to the aperture of the laser scanner. 
 
-Secondly, the response of the same surfaces differ from laser to laser, mostly due to the wavelength and energy of the laser used. As an example, the floor surface, which was made of tiles with reflective material, was only properly registered in the SICK LMS100 laser scanner, which is the laser with the most power output. It is expected to be due to the high reflection of the surface, so only a small fraction of the laser beams is reflected back to the laser scanner. If the laser emitted does not have considerable power, the reflected light could not have sufficient energy to be detected by the sensor. 
-
-Thirdly, the statistical error of the measurements of the laser scanner can influence the quality of the point cloud. In other words, if the statistical error is large, the the points belonging to the same surface will be more scattered. This can have a large effect on the extrinsic calibration of the laser scanner, as it relies on the surface points to obtain the calibration.
+Also, the response of the same surfaces differ from laser to laser, mostly due to the wavelength and energy of the laser used. As an example, the floor surface, which was made of tiles with reflective material, was only properly registered in the SICK LMS100 laser scanner, which is the laser with the most power output. It is expected to be due to the high reflection of the surface, only a small fraction of the laser beams is reflected back to the laser scanner. If the laser emitted does not have considerable power, the reflected light could not have sufficient energy to be detected by the sensor. 
 
 Moreover, the scanning rate of the laser scanner can be important to obtain dense point clouds, without requiring a large acquisition time. The Hokuyo UTM30 was the laser scanner with the higher scanning rate (\SI{40}{\hertz}), which produced point clouds with about 4 times the number of points obtained by the two other lasers, without sacrificing the acquisition time.
 
-Lastly, the SICK LMS100 laser was found to be unsuitable for this application, because the laser scans obtained were not accurate, compared to the other sensors. The laser scans of planar surfaces appear as deformed in this laser scanner. This can be seen in \cref{figure:deformed-laser}, where both the floor and the root are not shown as curved lines. Therefore, the resulting point clouds were always deformed, even after many extrinsic calibrations. The source of the problem was not identified, but is suspected to be due to a damaged laser scanner, or the laser scanner in question does not have the required accuracy for this application. Therefore, the acquisitions of this laser are not considered further on.
+Lastly, a problem was identified in the SICK LMS100 laser which made it unsuitable for this application, because the laser scans obtained were not accurate, compared to the other sensors. The laser scans of planar surfaces appear as deformed in this laser scanner. This can be seen in \cref{figure:deformed-laser}, where both the floor and the root are not shown as curved lines. Therefore, the resulting point clouds were always deformed, even after many extrinsic calibrations. This is most probably a problem of this laser scanner, and it is suspected to be due to a damaged laser scanner. Therefore, the acquisitions of this laser are not considered further on.
 
 \begin{figure}[h]
     
@@ -319,34 +385,11 @@ The color reconstruction is the final part of the reconstruction, which uses the
 
 \subsection{Camera Intrinsic Calibration}
 
-This calibration obtains the intrinsic parameters of the camera, as the focal length and center point. In total, three calibrations were done, which are shown in \cref{table:camera-intrinsic-calibration-results}. As can be seen, the results of the calibrations are similar between calibration. The calibration method used is widely used so it is expected that the results are accurate. 
-
-\begin{table}[h]
-    \caption{Results of the intrinsic calibration of the camera}
-
-    \centering
-    \begin{tabular}{@{} c cc c cc c cccc @{} }
-        \toprule
-           & \multicolumn{2}{c}{center point} & & \multicolumn{2}{c}{focal length} & & \multicolumn{4}{c}{distortion coefficients} \\
-        \cmidrule{2-3} \cmidrule{5-6} \cmidrule{8-11}
-
-        {calibration} & $x$ & $y$ &  & $x$ & $y$ & & $k_1$ & $k_2$ & $p_1$ & $p_2$  \\
-        \midrule
-        0 &   987.64 & 734.81 & & 2188.83 & 2184.15 & & -0.224 & 0.187 & 0.00110 & 0.000499  \\
-        1 &  1008.60 & 724.81 & & 2181.50 & 2181.45 & & -0.214 & 0.182 & 0.00175 & 0.001327  \\
-        2 &   985.64 & 755.84 & & 2147.93 & 2153.79 & & -0.211 & 0.195 & 0.00222 & 0.002553  \\
-        \midrule
-        $\mu$    & 994.0 & 738.5 & & 2173   & 2173   & & 0.216 & 0.188 & 0.00169  & 0.00146 \\
-        $\sigma$ &  10.4 &  12.9 & &   17.8 &   13.7 & & 0.006 & 0.005 & 0.00046  & 0.00084 \\
-        \bottomrule
-    \end{tabular}
-
-    \label{table:camera-intrinsic-calibration-results}
-\end{table}
+This calibration obtains the intrinsic parameters of the camera, as the focal length and center point. This calibration method used is widely used so it is expected that the results are accurate. 
 
 \subsection{Camera Extrinsic Calibration}
 
-The method used to obtain the extrinsic calibration of the camera was the hand-in-eye calibration method. In this work, an ArUCO marker with a side of \SI{200}{\milli\meter} was placed about \SI{2}{\meter} away from the camera. The PTU was then manually controlled to capture different images of the marker in different poses of the camera. After about 30 poses, the calibration was done. The number of calibration done using this method were 3, and the results are shown in \cref{table:camera-extrinsic-calibration-results}. The results are very close between calibrations however, further on it can be seen that the results of this calibration is sub-optimal and is not sufficient for the registration of color for distances larger than \SI{2}{\meter}.
+The method used to obtain the extrinsic calibration of the camera was the hand-in-eye calibration method. In this work, an ArUCO marker with a side of \SI{200}{\milli\meter} was placed about \SI{2}{\meter} away from the camera. The PTU was then manually controlled to capture different images of the marker in different poses of the camera. After about 30 poses, the calibration was done. The number of calibration done using this method were 3, and the results are shown in \cref{table:camera-extrinsic-calibration-results}. The results are very close between calibrations: for example, the standard deviation in the translation is in the order of \SI{0.001}{\meter}.
 
 \begin{table}[h]
     \caption{Results of the extrinsic calibration of the camera.}
@@ -374,13 +417,13 @@ The method used to obtain the extrinsic calibration of the camera was the hand-i
     \label{table:camera-extrinsic-calibration-results}
 \end{table}
 
-The failure of this calibration can be related to multiple shortcomings in this calibration method. First, this calibration uses an ArUCO as the marker for the pose estimation. It is possible that the error associated with the pose estimation can be large, jeopardizing the subsequent calibration. Second, the limited field of view of the camera limits the range of the movements of the PTU for a small interval of angles in pan and tilt. This limitation in space can result in a limited space of angles registered, which can therefore impact the accuracy of the result. Hence, this calibration fails to obtain an accurate extrinsic calibration of the camera.
+However, this calibration lacks the required precision for the color registration, because the colors are noticeable misaligned with the geometry, as seen in the next section. The failure of this calibration can be related to multiple shortcomings in this calibration method. First, this calibration uses an ArUCO as the marker for the pose estimation. It is possible that the error associated with the pose estimation is large and be the source of the error of the calibration. Second, the limited field of view of the camera limits the range of the movements of the PTU for a small interval of angles in pan and tilt. This limitation in space can result in a limited space of angles registered, which can therefore impact the accuracy of the result. It is possible that, by using more markers, wider angles cloud be possible. Hence, this calibration fails to obtain an accurate extrinsic calibration of the camera.
 
 \subsection{Color Registration and Fusion}
 
-In the color registration and fusion process, the color is attributed to each point in the point cloud. In short, the color registration defines how each point is colorized, based on an image, and the fusion process defines what is the resulting color, after all the images are registered. In total, six methods were approached in this work for the color fusion: the first three methods choose a color from all the registered color and the last three methods calculate the average of all the colors, though a simple mean, or a weighted mean.
+In the color registration and fusion process, the color is attributed to each point in the point cloud. In short, the color registration defines how each point is colorized, based on an image, and the fusion process defines what is the resulting color, after all the images are registered. In total, six methods were tested in this work for the color fusion: the first three methods choose a color from all the registered color and the last two methods calculate the average of all the colors, though a simple mean, or a weighted mean.
 
-The registration process was, however, not perfect, mostly due to a imperfect calibration of the camera. Therefore, the color are not registered in their correct positions, as seen in \cref{figure:wrong-registration-photocopy}. In this image, the colors from different object are registered in wrong objects, for example, the elevator door. Also, the discontinuities are result of this inaccurate registration.
+The registration process was, however, not perfect, mostly due to a imperfect calibration of the camera. Therefore, the color are not registered in their correct positions, as seen in \cref{figure:wrong-registration-photocopy}. In this image, the colors from different object are registered in wrong objects, for example, the elevator door. This is a common problem and can be seen, for example, in the elevator door.
 
 \begin{figure}[h]
     
@@ -420,7 +463,7 @@ Also, the images taken have different color values for the same objects. This is
 
 \end{figure}
 
-The color fusion techniques also have a great effect on the final result. The colors look sharper if the chosen method is the first, last or the closest method, but discontinuities caused by the imperfect registration are more noticeable. On the other hand, mean methods results in a blurring effect on the colors, but the discontinuities are less noticeable. In general, the mean fusion produces the best result overall, but the small details are smudged. The closest color fusion produces the sharpest result, so the small details are visible, however, it yields the worst quality overall. The two results can be seen in \cref{figure:fusion-methods-closest,figure:fusion-methods-mean}.
+The color fusion techniques also have a great effect on the final result. The colors look sharper if the chosen method is the first or last color fusion method, but discontinuities caused by the imperfect registration are more noticeable. On the other hand, mean methods results in a blurring effect on the colors, but the discontinuities are less noticeable. In general, the mean fusion produces the best result overall, but the small details are smudged. The closest color fusion produces the sharpest result, so the small details are visible, however, it yields the worst quality overall. The two results can be seen in \cref{figure:fusion-methods-closest,figure:fusion-methods-mean}.
 
 \begin{figure}[h]
     

@@ -1,18 +1,18 @@
 \section{Color Registration}
 \label{section:color-registration}
 
-This method describes how to colorize a point cloud based on a single image, using a working principle similar to the ray tracing used in computer graphics. As an overview, each point in the point cloud can be transformed as a ray in the camera perspective, which is basically the path from the eye point to the point. This ray can be used to retrieve the original color of the point from the image. However, this process is not so straightforward, because the position and orientation of the camera has to be very precise and occluded points need to be rejected.
+This method describes how to colorize a point cloud based on a single image, using projection principle based on the camera model. As an overview, each point in the point cloud can be projected as a ray in the camera perspective, which is basically the path from the eye point to the point. This ray can be used to retrieve the original color of the point from the image. However, this process is not so straightforward, because the position and orientation of the camera has to be very precise and occlusion has to be considered.
 
-\subsection{Point to pixel coordinates transformation}
+\subsection{Point Projection}
 
-To start, each point has to be transformed, because the original point is registered in the scene coordinate frame ($p_{scene}$) and has to be registered into the camera coordinate frame ($p_{camera}$). So, the transformations $\prescript{acquisition}{scene}{\mathcal{T}}$, $\prescript{ptu}{acquisition}{\mathcal{T}}$, $\prescript{camera}{ptu}{\mathcal{T}}$ can be used according to \cref{eqn:point-camera-transformation}. The $\prescript{acquisition}{scene}{\mathcal{T}}$ transformation is obtained in \cref{section:acquisition-registration}, $\prescript{ptu}{acquisition}{\mathcal{T}}$ is the transformation of the PTU and $\prescript{camera}{ptu}{\mathcal{T}}$ is the extrinsic calibration of the camera and the method to obtain it is in \cref{section:camera-extrinsic-calibration}. The transformation graph can be seen in \cref{fig:color-registration-3d}.
+To start with, each point has to be transformed, because the original point is registered in the scene coordinate frame ($p_{scene}$) and has to be transformed into the camera coordinate frame ($p_{camera}$). So, the transformations $\prescript{acquisition}{scene}{T}$, $\prescript{ptu}{acquisition}{T}$, $\prescript{camera}{ptu}{T}$ can be used according to \cref{eqn:point-camera-transformation}. The $\prescript{acquisition}{scene}{T}$ transformation is obtained in \cref{section:acquisition-registration}, $\prescript{ptu}{acquisition}{T}$ is the transformation of the PTU and $\prescript{camera}{ptu}{T}$ is the extrinsic calibration of the camera and the method to obtain it is in \cref{section:camera-extrinsic-calibration}. The transformation graph can be seen in \cref{fig:color-registration-3d}.
 
 \begin{equation}
     \label{eqn:point-camera-transformation}
     p_{scene} =
-        \prescript{acquisition}{scene}{\mathcal{T}} \cdot 
-        \prescript{ptu}{acquisition}{\mathcal{T}} \cdot
-        \prescript{camera}{ptu}{\mathcal{T}} \cdot p_{camera}
+        \prescript{acquisition}{scene}{T} \cdot 
+        \prescript{ptu}{acquisition}{T} \cdot
+        \prescript{camera}{ptu}{T} \cdot p_{camera}
 \end{equation}
 
 \begin{figure}
@@ -88,7 +88,7 @@ To start, each point has to be transformed, because the original point is regist
         
     \end{tikzpicture}
 
-    \caption{Color registration for a single point}
+    \caption{Color registration for a single point.}
     \label{fig:color-registration-3d}
 \end{figure}
 
@@ -121,8 +121,6 @@ Next, each point was transformed into pixel coordinates $(u, v)$, using the pinh
         \end{array}    
     \right).
 \end{equation}
-
-\subsection{Camera Distortion}
 
 The pinhole camera model does not regard the distortion caused by the lens, which is not negligible for most cameras. The two sources of distortion are radial and tangential distortion. Radial distortion makes straight lines appear curved, known as the barrel distortion and pincushion distortion. This distortion is highly noticed in images taken with fish-eye lenses, as seen in \cref{fig:fisheye}. This distortion can be solved by transforming the $(u, v)$ with \cref{eqn:radial-distortion}. Similarly, tangential distortion is caused by a misalignment of the lens to the imaging plane, which causes areas in the image to appear closer than expected. This deformation can be solved with the \cref{eqn:tangential-distortion}. In brief, to undistort the image five parameters need to be determined, also known as the distortion coefficients: $\{k_1, k_2, p_1, p_2, k_3\}$, which are obtained in the camera intrinsic calibration method, described in \cref{section:camera-intrinsic-calibration}.
 
@@ -172,13 +170,89 @@ The pinhole camera model does not regard the distortion caused by the lens, whic
 
 \end{figure}
 
+\subsection{Camera Intrinsic Calibration}
+\label{section:camera-intrinsic-calibration}
+
+The intrinsic calibration determines the intrinsic parameters of the camera. The calibration procedure used in this work is a standard procedure for cameras with low distortion and is known as the chessboard camera calibration. This method calibrates a monocular camera with fixed focus using a sequence of images taken from a chessboard with known dimensions.
+
+In order to improve the calibration results, the chessboard should rotate and move, in order to occupy the entire image size and the chessboard poses should be enough and be well distributed spatially. Also, the calibration is more accurate if the corners of the chessboard are well defined in the image, so the chessboard should have an appropriate size
+
+In the end, the accuracy of the calibration should be measured for new images, with the re-projection error. This value should be as low as possible and, as a rule of thumb, a value less than \num{0.01} is acceptable.
+
+In ROS, this calibration is easily obtained with the \emph{cameracalibrator.py}, which includes a graphical interface, and provides feedback about the corner detection and the state of the calibration. The interface is shown on \cref{figure:camera-calibrator}. In this system, this data is first saved into a ROS \emph{camera\_info} file. Then, this file is also saved in each capture in the parameters file.
+
+\begin{figure}
+    
+    \centering
+    \includegraphics[width=10cm]{camera-intrinsic-calibration}
+
+    \caption{Interface for the \emph{cameracalibrator} node.}
+    \label{figure:camera-calibrator}
+
+\end{figure}
+
+\subsection{Camera Extrinsic Calibration}
+\label{section:camera-extrinsic-calibration}
+
+The calibration method used to determine the extrinsic parameters is known as the eye-in-hand calibration, described in \cite{horaud95}.
+
+This calibration relies on a static calibration object, whose pose can be estimated in the camera frame. Hence, four coordinate frames and four transformation exist. The four frames are the \emph{camera} frame, the \emph{world} frame, the \emph{PTU} frame and the \emph{object}. The four transformations are the extrinsic transformation of the camera, or the \emph{PTU} to the \emph{camera} transformation $\TF{ptu}{camera}$, which is static and unknown, the \emph{camera} to \emph{object} transformation $\TF{camera}{object}$, which is obtained by the object pose estimation algorithm, the \emph{world} to \emph{PTU}, which is known and, finally, the \emph{world} to \emph{object} transformation, which is static and unknown. The overall transformation graph is shown is in \cref{fig:hand-in-eye-tf-graph}, with the unknown transformations in red and the known transformations in green.
+
+\begin{figure}
+    
+    \centering
+    \begin{tikzpicture}
+        \node[draw, ellipse] (world) at (0,0) {world};
+        \node[draw, ellipse] (hand) at (-4,3) {hand/ptu};
+        \node[draw, ellipse] (object) at (4,3) {object};
+        \node[draw, ellipse] (camera) at (0, 6) {camera};
+        
+        \path[-latex]
+            (world) edge[bend right] node[midway, below right, red] {$\TF{world}{object}$} (object)
+            (world) edge[bend left] node[midway, below left, blue] {$\TF{world}{ptu}$} (hand)
+            (hand) edge[bend left] node[midway, above left, red] {$\TF{hand}{camera}$} (camera)
+            (camera) edge[bend left] node[midway, above right, blue] {$\TF{camera}{object}$} (object);
+    \end{tikzpicture}
+
+    \caption{Hand-in-eye transformation graph.}
+    \label{fig:hand-in-eye-tf-graph}
+
+\end{figure}
+
+The inspection of the transformation graph determines an equality, because there are two possible ways to transverse the graph from one node to another, which yields the \cref{eqn:hand-in-eye-equality}. This equality is the base of this optimization: $\TF{ptu}{camera}$ can be obtained from multiple pairs of synchronized $\TF{world}{object}$ and $\TF{camera}{object}$ transformations.
+
+\begin{equation}
+    \label{eqn:hand-in-eye-equality}
+    \TF{world}{object} = \TF{world}{ptu} \cdot \TF{ptu}{camera} \cdot \TF{camera}{object}
+\end{equation}
+
+In this work, the object used for detection was an ArUco marker, which is comprised of a pattern which can be detected and also allows for precise pose estimation, as seen in \cref{fig:aruco-detection}. One of the biggest advantages over other markers is that the implementation for detection and pose estimation is already implemented in the ROS package \emph{aruco\_detect}. The calibration is also implemented in the ROS package \emph{visp\_hand2eye\_calibration}, as a node that receives multiple transformations in the topics \emph{/world\_effector} and \emph{/camera\_object}, which correspond respectively to the $\TF{world}{ptu}$ and $\TF{camera}{object}$ transformations. To publish the transformations on this topics, a node was developed, the \emph{hand2eye\_simple\_client}, which publishes both the transformations synchronously at the keypress of the user. The control of the PTU was also manual. 
+
+\begin{figure}
+    
+    \centering
+    \includegraphics[width=10cm]{camera-extrinsic-calibration}
+
+    \caption{ArUco maker detection and pose estimation.}
+    \label{fig:aruco-detection}
+\end{figure}
+
 \subsection{Point filtering}
 
-Not all points are eligible for the color registration, based on it's location and camera properties, so two filtering steps were used: the first filter removes the points outside the view frustum and the second removes the hidden points.
+Not all points are eligible for the color registration, based on it's location and camera properties, so two filtering steps were used: the first filter removes the points outside the field of view and the second removes the occluded points.
 
-\subsubsection{View Frustrum Removal Filter}
+\subsubsection{Field of View Removal Filter}
 
-The view frustum is defined as the region of space that is captured by the camera sensor, which for pinhole cameras is a pyramid truncated by two parallel planes (the near and far clipping planes), as seen in \cref{fig:visual-frustrum-3d}. The sides of the frustum are limited by the size of the sensor, so the points that lie outside the bounding box defined by the points $(0,0)$ and $(width, height)$ is excluded.
+The field of view is defined as the region of space that is captured by the camera sensor, which for pinhole cameras has a pyramid geometry, as seen in \cref{fig:camera-fov}. The sides of the pyramid are limited by the size of the sensor, so the points that lie outside the rectangle defined by the points $(0,0)$ and $(width, height)$ are excluded, as:
+
+
+\begin{equation}
+    \label{eqn:frustum-condition}
+    \begin{aligned}
+                 & 0        & < u & < width \\
+        \wedge \ & 0        & < v & < height. \\
+    \end{aligned}
+\end{equation}
 
 
 \begin{figure}[h]
@@ -216,32 +290,19 @@ The view frustum is defined as the region of space that is captured by the camer
         \drawfrustumlines{-10}{8};
         \drawfrustum{-8}{-4}{8};
 
-        \draw[dashed] (0,0,-1.5) -- (0,0, -2);
-        \draw[dashed] (-4,0,-2) -- (-4, 0, -1);
-        \draw[dashed] (-8,0,-2) -- (-8, 0, -1.5);
+        % \draw[dashed] (0,0,-1.5) -- (0,0, -2);
+        % \draw[dashed] (-4,0,-2) -- (-4, 0, -1);
+        % \draw[dashed] (-8,0,-2) -- (-8, 0, -1.5);
 
-        \draw[latex-latex] (0,0,-2) -- (-4, 0, -2) node[above, midway, sloped] {$z_{near}$};
-        \draw[-latex] (-4,0,-2) -- (-8, 0, -2) node[above, midway, sloped] {$z_{far}$};
+        % \draw[latex-latex] (0,0,-2) -- (-4, 0, -2) node[above, midway, sloped] {$z_{near}$};
+        % \draw[-latex] (-4,0,-2) -- (-8, 0, -2) node[above, midway, sloped] {$z_{far}$};
         
     \end{tikzpicture}
 
-    \caption{Representation of the visual frustum of the camera}
-    \label{fig:visual-frustrum-3d}
+    \caption{Representation of the visual frustum of the camera.}
+    \label{fig:camera-fov}
 
 \end{figure}
-
-The near and far clipping planes should reject the points based on the depth of field of the camera. The depth of field, or DOF, is the distance from the camera to the objects range, so that this objects are in focus. If the object falls out of this range, it starts to loose focus incrementally the farther out it is. There is a point where the object is sharper, which is called point of optimal focus. Two factor influences the DOP: the aperture size and the focal length. The aperture influences the amplitude of the DOF, so a bigger aperture results in a narrower DOF, and the focal length defines the point of optimal focus, so a bigger focal length moves the DOF farther away from the camera. The near and far clipping plane should defined to be the boundaries of the DOF, so that all points are in focus.
-
-Based on the frustum of the camera defined above, the points that do not respect \cref{eqn:frustum-condition} should be rejected.
-
-\begin{equation}
-    \label{eqn:frustum-condition}
-    \begin{aligned}
-                 & 0        & < u & < width \\
-        \wedge \ & 0        & < v & < height \\
-        \wedge \ & z_{near} & < z & < z_{far} \\
-    \end{aligned}
-\end{equation}
 
 \subsubsection{Hidden Point Removal Filter}
 
@@ -260,7 +321,7 @@ The inversion step maps each point $p_i$ along the ray from $\mathcal{C}$ to $p_
 
 Afterwards, the convex hull of $\hat{\mathcal{P}} \bigcup \{\mathcal{C}\}$, where $\hat{\mathcal{P}}$ is the transformed point set and $\mathcal{C}$ is the center of the sphere, is computed. Finally, the points that lie in the convex hull are the visible points of the point set.
 
-This algorithm only has a parameter, which is the radius $R$ of the sphere used for the spherical flipping, which influences the amount of false positives of the algorithm. In general, $R$ is determined based on the maximum point length $max(|p_i|)$ and a exponential factor $\alpha$, such that $R = max(|p_i|) \times 10^{\alpha}$. In this application, a factor of $\alpha = 3$ was adequate.
+This algorithm only has a parameter, which is the radius $R$ of the sphere used for the spherical flipping, which influences the amount of false positives of the algorithm. In general, $R$ is determined based on the maximum point length $max(|p_i|)$ and a exponential factor $\alpha$, such that $R = max(|p_i|) \times 10^{\alpha}$. In this application, a factor of $\alpha = 3$ was empirically selected.
 
 As an example, the HPR operator was used in the Stanford Bunny\footnote{From https://www.cc.gatech.edu/~turk/bunny/bunny.html.} point cloud, as seen in \cref{fig:hpr-operator-bunny} and, as seen, \cref{fig:after-hpr} only presents the points that are visible, as opposed to \cref{fig:before-hpr}.
 
@@ -270,17 +331,17 @@ As an example, the HPR operator was used in the Stanford Bunny\footnote{From htt
     \begin{subfigure}{0.5\textwidth}
         \centering
         \includegraphics[height=6cm]{bunny-before-hpr}
-        \caption{Before the HPR}
+        \caption{Before the HPR.}
         \label{fig:before-hpr}
     \end{subfigure}%
     \begin{subfigure}{0.5\textwidth}
         \centering
         \includegraphics[height=6cm]{bunny-after-hpr}
-        \caption{After the HPR}
+        \caption{After the HPR.}
         \label{fig:after-hpr}
     \end{subfigure}
 
-    \caption{Result of the HPR operator in the Bunny point cloud}
+    \caption{Result of the HPR operator in the Bunny point cloud.}
     \label{fig:hpr-operator-bunny}
 
 \end{figure}
@@ -290,7 +351,7 @@ As an example, the HPR operator was used in the Stanford Bunny\footnote{From htt
 \newcommand\ceil[1]{\lceil #1 \rceil}
 \newcommand\floor[1]{\lfloor #1 \rfloor}
 
-Finally, the color is extracted from the image at the pixel coordinates $(u, v)$ and saved for the correspondent pixel. Because images are discrete, the color is interpolated using a bilinear interpolation, which uses the neighbor pixels to interpolate the color $C$ at $(u, v)$ in an image $I$ according to \cref{eqn:bilinear-interpolation} (the ceil and floor operators are, respectively, $\ceil{\cdot}$ and $\floor{\cdot}$). The interpolation can be visualized in \cref{fig:bilinear-interpolation}.
+Finally, the color is selected from the image at the pixel coordinates $(u, v)$ and saved for the correspondent pixel. Because images are discrete, the color is interpolated using a bilinear interpolation, which uses the neighbor pixels to interpolate the color $C$ at $(u, v)$ in an image $I$ according to \cref{eqn:bilinear-interpolation} (the ceil and floor operators are, respectively, $\ceil{\cdot}$ and $\floor{\cdot}$). The interpolation can be visualized in \cref{fig:bilinear-interpolation}.
 
 \begin{equation}
     \label{eqn:bilinear-interpolation}
@@ -327,7 +388,7 @@ Finally, the color is extracted from the image at the pixel coordinates $(u, v)$
 
     \end{tikzpicture}
 
-    \caption{Bilinear interpolation in an image}
+    \caption{Bilinear interpolation in an image.}
     \label{fig:bilinear-interpolation}
 
 \end{figure}
