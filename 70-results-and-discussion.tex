@@ -96,11 +96,14 @@ The RADLOCC calibration, described in \cref{section:radlocc-method}, was the fir
         7 & 14 &  0.0009 &  0.0699 & -0.0692 &  0.7126 &  0.0003 &  0.7013 & -0.0130 \\
         8 & 22 &  0.0212 &  0.0373 & -0.0641 &  0.7190 &  0.0074 &  0.6948 & -0.0131 \\
         \midrule
-        $\mu$ \footnote{$\mu$ is the mean of the results.}
+        $\mu^1$
             &  &  0.0066 &  0.0612 & -0.0602 &  0.7162 &  0.0063 &  0.6973 & -0.0034 \\
-        $\sigma$ \footnote{$\sigma$ is the standard variation of the results.}
+        $\sigma^2$
             &  &  0.0217 &  0.0539 &  0.0180 &  0.0056 &  0.0115 &  0.0059 &  0.0223 \\
         \bottomrule
+        \multicolumn{5}{l}{$^1$ $\mu$ is the mean of the results.} \\
+        \multicolumn{5}{l}{$^2$ $\sigma$ is the standard variation of the results.}
+
     \end{tabu}
 
     \label{table:radlocc-results}
@@ -418,6 +421,8 @@ The method used to obtain the extrinsic calibration of the camera was the hand-i
 \end{table}
 
 However, this calibration lacks the required precision for the color registration, because the colors are noticeable misaligned with the geometry, as seen in the next section. The failure of this calibration can be related to multiple shortcomings in this calibration method. First, this calibration uses an ArUCO as the marker for the pose estimation. It is possible that the error associated with the pose estimation is large and be the source of the error of the calibration. Second, the limited field of view of the camera limits the range of the movements of the PTU for a small interval of angles in pan and tilt. This limitation in space can result in a limited space of angles registered, which can therefore impact the accuracy of the result. It is possible that, by using more markers, wider angles cloud be possible. Hence, this calibration fails to obtain an accurate extrinsic calibration of the camera.
+
+\FloatBarrier
 
 \subsection{Color Registration and Fusion}
 
